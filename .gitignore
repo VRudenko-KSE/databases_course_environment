@@ -1,0 +1,7 @@
+.env
+
+# Learners may add private working files here; keep the supplied examples.
+work/*
+!work/.gitkeep
+!work/verify.sql
+!work/practice-02.sql
