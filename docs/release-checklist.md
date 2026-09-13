@@ -63,6 +63,15 @@ follow-up checks; it does not replace the broader baseline runtime/clone evidenc
 `course-environment` repository. The parent course workspace is not a Git repository. Neither local tag is a
 published release or satisfies the remote-publication gate.
 
+### 2026-09-13 Docker Desktop Linux documentation revision
+
+The active Linux setup and troubleshooting guides now use Docker Desktop for supported x86_64 Ubuntu, Debian, and
+Fedora systems. This documentation revision does not alter the dated runtime, clean-clone, or synthetic-seed evidence
+below and does not claim a native Linux test. Native Linux Desktop installation, KVM access, the `desktop-linux`
+context, and host-file sharing remain pending platform checks. Docker Desktop for Linux does not support Linux arm64;
+students on that platform use a supported course computer. macOS Apple Silicon remains a separate supported but
+untested route.
+
 ### Acceptance record
 
 <!-- rumdl-disable MD013 -->
@@ -163,5 +172,5 @@ untracked learner work. The private TA guide and parent course documents are out
 
 Before publication, the instructor must provide the destination URL and access policy, authorize publication,
 replace `COURSE_REPOSITORY_URL` in the release announcement, and test the real URL and released revision as a
-student. Windows, native arm64, named Linux distribution/SELinux, actual disconnected-network, novice, and
-published-clone evidence remain release gates.
+student. Windows, macOS Apple Silicon, native Docker Desktop on the named Linux distributions, Linux
+KVM/context/file sharing, actual disconnected-network, novice, and published-clone evidence remain release gates.

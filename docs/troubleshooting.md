@@ -22,11 +22,13 @@ course problem.
 **Symptom:** `docker version` shows client details followed by “cannot connect to the Docker daemon,” “Docker Desktop
 is not running,” or a named-pipe/socket error. Compose cannot start either service.
 
-**Diagnose:** on Windows or macOS, open Docker Desktop and inspect its engine status. On Linux, run
-`sudo systemctl status docker --no-pager`.
+**Diagnose:** open Docker Desktop and inspect its status. On Linux, also run `docker context show` and
+`systemctl --user status docker-desktop --no-pager`.
 
-**Recover:** start Docker Desktop and wait for the engine, or run `sudo systemctl start docker` on Linux. Return to
-the course directory and run `docker compose up -d --wait`, then `docker compose ps`.
+**Recover:** start Docker Desktop from the application launcher and wait for it to report that Docker is running.
+After Docker Desktop has completed its first launch on Linux, you may instead run
+`systemctl --user start docker-desktop`. Return to the course directory and run `docker compose up -d --wait`, then
+`docker compose ps`.
 
 **Expected:** `docker version` shows both Client and Server sections and both course services become healthy. If the
 engine immediately stops again, continue with the virtualization or pending-reboot section.
@@ -49,36 +51,48 @@ enable nested virtualization. Do not guess firmware settings on a managed comput
 **Recover on macOS:** confirm that the Docker installer matches Apple Silicon or Intel. A result of `0` means this
 Mac cannot supply the required Hypervisor framework; use a supported course computer.
 
+**Diagnose on Linux:** confirm that `uname -m` prints `x86_64`, `ls -l /dev/kvm` finds the KVM device,
+`qemu-system-x86_64 --version` reports QEMU 5.2 or later, and `id -nG` contains `kvm`. Docker Desktop for Linux does
+not support arm64 or nested virtualization.
+
+**Recover on Linux:** enable Intel VT-x or AMD-V in firmware with the computer owner's help when `/dev/kvm` is
+missing. Install QEMU with `sudo apt install qemu-system-x86` on Ubuntu/Debian or
+`sudo dnf install qemu-system-x86` on Fedora. If KVM exists but your user lacks access, run
+`sudo usermod -aG kvm "$USER"`, then sign out of the complete desktop session and sign back in. Use a supported
+course computer when the architecture is not x86_64 or the machine depends on nested virtualization.
+
 **Expected:** Docker Desktop reaches its running state and `docker version` shows a Server section. Windows and Mac
 installer/firmware recoveries remain release-test items until observed on the named hardware.
 
-## Linux Docker permission denied
+## Linux Docker Desktop context or socket is wrong
 
-**Symptom:** Docker exists, but commands report permission denied for `/var/run/docker.sock`.
+**Symptom:** Docker Desktop is open, but a command targets `/var/run/docker.sock`, reports permission denied, uses
+unexpected images or volumes, or cannot connect through the `default` context.
 
-**Diagnose:** run `id -nG`, `ls -l /var/run/docker.sock`, and `sudo systemctl status docker --no-pager`. The service
-must be active and your login session must have the chosen access method.
+**Diagnose:** run `docker context ls`, `docker context show`, and
+`env | grep -E '^DOCKER_(HOST|CONTEXT)='`. Docker Desktop should supply and select `desktop-linux`; `DOCKER_HOST` or
+`DOCKER_CONTEXT` can override that selection. Its socket is per-user, so a `/var/run/docker.sock` error usually means
+the CLI is still targeting a host Docker Engine.
 
-**Recover:** on a personal course computer, follow the explicit access decision in
-[Linux setup action 12](setup-linux.md#configure-access-and-start-the-course-package). If you accepted permanent
-Docker-group access, run `sudo usermod -aG docker "$USER"`, then sign out of the desktop completely and sign back in.
-Membership in `docker` grants root-level host privileges. On a managed computer, ask its administrator about
-rootless or supervised access.
+**Recover:** keep Docker Desktop running. Run `unset DOCKER_HOST DOCKER_CONTEXT`, remove any stale exports from your
+shell startup file, then run `docker context use desktop-linux`. Do not use `sudo docker`, add yourself to the
+`docker` group, change socket permissions, or delete the existing Engine's images and volumes. If `desktop-linux` is
+absent, return to the [Linux Desktop launch action](setup-linux.md#configure-access-and-start-the-course-package).
 
-**Expected:** `id -nG` includes `docker` for the group route and `docker version` works without `sudo`. Do not change
-socket permissions with `chmod 666`.
+**Expected:** `docker context show` prints `desktop-linux`, and `docker version` works without `sudo` and shows both
+Client and Server sections. Desktop images and volumes remain separate from data owned by an existing host Engine.
 
 ## A reboot or sign-out is still pending
 
 **Symptom:** WSL, Docker, or Git was installed, but a new terminal still sees the old state. Docker may show WSL or
 hypervisor errors immediately after Windows features were enabled. Linux still lacks new group membership.
 
-**Diagnose:** note whether the installer or `wsl --install` requested a restart. On Linux, compare `groups` in the
-current terminal after adding the user to `docker`.
+**Diagnose:** note whether the installer or `wsl --install` requested a restart. On Linux, compare `id -nG` in the
+current terminal after adding the user to `kvm`.
 
 **Recover:** save work. Restart Windows after WSL, Windows-feature, hypervisor, or Docker requests. On Linux, sign
-out of the complete desktop session and sign back in; opening another terminal is insufficient. Reopen Docker
-Desktop where applicable and wait for its engine.
+out of the complete desktop session and sign back in after changing KVM access; opening another terminal is
+insufficient. Reopen Docker Desktop and wait for it to report that Docker is running.
 
 **Expected:** `Get-Command docker` or `command -v docker` finds the CLI, and `docker version` shows Client and Server.
 
@@ -157,10 +171,10 @@ destructive to container-held course state and cannot restore unsaved database c
 **Diagnose:** open a completely new terminal after installation. On Windows use `Get-Command git` and
 `Get-Command docker`; on macOS/Linux use `command -v git` and `command -v docker`.
 
-**Recover:** for Git, rerun the OS guide's supported installer or package-manager action. For Docker Desktop, start
-the application and complete its recommended CLI setup; then reopen the terminal. On Linux, install the official
-`docker-ce-cli` and `docker-compose-plugin` packages from the correct distribution branch. Do not install a package
-named `postgresql` or `psql`.
+**Recover:** for Git, rerun the OS guide's supported installer or package-manager action. For Docker Desktop, install
+the downloaded Desktop package from the matching OS guide, start the application, and complete its CLI setup; then
+reopen the terminal. The Docker Desktop package supplies or resolves the required CLI and Compose dependencies. Do
+not substitute a standalone Docker Engine installation or install a package named `postgresql` or `psql`.
 
 **Expected:** Git prints a version, Docker shows Client and Server, and `docker compose version` identifies Compose
 v2. A Docker CLI path alone does not prove the engine is running.
@@ -250,10 +264,12 @@ docker compose exec db ls -l /work
 ```
 
 **Recover:** save the file under the package's host `work` directory and make the names match exactly, including
-letter case on Linux. On macOS/Windows Docker Desktop, keep the checkout in a file-shared user folder. On Linux,
-grant your user ordinary read access to the specific file; do not make the whole home directory world-writable. On
-Fedora, use [Linux setup action 18](setup-linux.md#configure-access-and-start-the-course-package) only after an AVC
-record confirms an SELinux denial on the three course-owned paths.
+letter case on Linux. Keep the checkout in a local folder under your home directory that Docker Desktop can share;
+avoid a network share, remote mount, or removable drive for the first run. If Docker Desktop displays a file-sharing
+prompt, allow the checkout folder. On Linux, grant your user ordinary read access to the specific file; do not make
+the whole home directory world-writable and do not apply Engine-specific SELinux relabel commands. If a failed first
+startup left the fixture missing after sharing is repaired, use the
+[scoped Linux seed recovery](setup-linux.md#linux-clone-configure-and-start).
 
 **Expected:** `docker compose exec db ls -l /work` shows the file, and this pattern exits `0`:
 
@@ -271,6 +287,7 @@ preserved. It also observed a space-containing clean local clone, stop-on-error 
 by changing project ports. The canonical evidence and remaining gates are in the
 [release checklist](release-checklist.md#task-6-local-release-candidate-verification).
 
-Windows/WSL, macOS fresh installation, native Linux, Fedora SELinux, Arm, DBeaver GUI/driver, and novice recovery
-walkthroughs remain unverified release checks. The course release must not convert these instructions into claims
-until the named platform and exact version have been observed.
+Windows/WSL, macOS fresh installation, macOS Apple Silicon, native Docker Desktop on Ubuntu/Debian/Fedora, Linux
+KVM/context/file sharing, DBeaver GUI/driver, and novice recovery walkthroughs remain unverified release checks. The
+course release must not convert these instructions into claims until the named platform and exact version have been
+observed.

@@ -7,10 +7,10 @@ Start with the complete guide for your computer:
 
 - [Windows setup from zero](docs/setup-windows.md)
 - [macOS setup from zero](docs/setup-macos.md)
-- [Ubuntu, Debian, or Fedora setup from zero](docs/setup-linux.md)
+- [Ubuntu, Debian, or Fedora Docker Desktop setup from zero](docs/setup-linux.md)
 
-Each guide installs Git and Docker, obtains this standalone package, starts the services, opens the supplied pgAdmin
-connection, and checks container `psql` and a host-saved SQL file. Use
+Each guide installs Git and Docker Desktop, obtains this standalone package, starts the services, opens the supplied
+pgAdmin connection, and checks container `psql` and a host-saved SQL file. Use
 [Troubleshooting](docs/troubleshooting.md) when an expected result differs.
 
 1. Copy `.env.example` to `.env` and choose local ports/passwords before the first startup.
