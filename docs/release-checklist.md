@@ -56,9 +56,12 @@ Docker Desktop 4.55.0, Docker client/engine 29.1.3, Compose v2.40.3-desktop.1, G
 CPython 3.14.7, Playwright 1.62.0, and Google Chrome. The separate checker project is
 `/private/tmp/course-release-check`; it is not part of this learner package.
 
-The local candidate is identified by the **`local-rc-2026-09-12`** Git tag. Its exact commit is recorded in the
-private Task 6 verification report. This local tag is not a published release and does not satisfy the remote
-publication gate.
+The **`local-rc-2026-09-12`** Git tag is the historical full-runtime and clean-local-clone baseline; its exact
+commit is recorded in the private Task 6 verification report. **`local-rc-2026-09-13`** is the finalized local
+documentation-fix tag, created after the scoped PASS. It records the reviewed documentation changes and focused
+follow-up checks; it does not replace the broader baseline runtime/clone evidence. Both tags belong to the local
+`course-environment` repository. The parent course workspace is not a Git repository. Neither local tag is a
+published release or satisfies the remote-publication gate.
 
 ### Acceptance record
 
@@ -79,6 +82,31 @@ publication gate.
 | 11 | Published URL/revision and public clone | Pending | No destination remote or access policy was supplied and publication was not authorized. The learner guides therefore retain `COURSE_REPOSITORY_URL`; a student-accessible published clone remains required. |
 
 <!-- rumdl-enable MD013 -->
+
+### 2026-09-13 documentation-fix follow-up
+
+The controller performed focused checks in an isolated project for the new documentation paths:
+
+- A host-created UTF-8 `work/my-first-query.sql` ran through
+  `docker compose exec -T db psql -X -U student -d university -v ON_ERROR_STOP=1 -f /work/my-first-query.sql` and
+  printed `Saved on my laptop`. Editing and saving that same host file, then rerunning the same command, printed
+  `Edited on my laptop`. The unchanged `work/verify.sql` returned `university | student`, count `8`, and the eight
+  canonical IDs.
+- A synthetic failed initial seed left the database container at exit `3` after `CREATE DATABASE`; the enclosing
+  `docker compose up --wait` command exited `1`. After the seed file was restored and the project restarted,
+  `to_regclass('practice.courses')` was `NULL`, confirming that restart alone did not reseed it. The documented
+  scoped reset plus `verify.sql` restored all eight rows and preserved `public.recovery_guard = 'preserved'`.
+
+- Browser recovery removed the registration, confirmed removal, and used **Welcome → Add New Server** to open
+  **Register - Server**. It saved **Name** `Course PostgreSQL`, **Server group** `Course`, and the documented
+  `db:5432` / `university` / `student` database fields without a service or volume reset. A fresh browser login then
+  prompted for the database password; Query Tool returned `university | student`, count `8`, and all eight canonical
+  IDs. The registration probe and recovery-query checks each exited `0`.
+
+Both temporary focused-test projects were removed with project-scoped `down --volumes --remove-orphans`, each
+returning `0`. The normal `course-postgresql` `db` and `pgadmin` services remained healthy on ports `5432` and `5050`.
+
+These focused checks do not test native Fedora/SELinux or actual Windows, macOS, or Linux editor GUI routes.
 
 The [login](images/pgadmin-login.png), [preloaded server](images/pgadmin-preloaded-server.png), and
 [Query Tool result](images/pgadmin-query-result.png) are real captures from this pgAdmin 9.17 rehearsal.

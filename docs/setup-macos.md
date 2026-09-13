@@ -31,10 +31,14 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
 
 ### macOS preflight
 
-1. **Identify the Mac and supported release.** Where: choose **Apple menu → About This Mac**. Record the macOS
-   version and whether **Chip** says Apple M-series or **Processor** says Intel. Expected: the release is within
-   Docker's current three-major-version window. Recovery: update macOS or use a supported course computer if it is
-   outside that window.
+1. **Identify the Mac, disk, and access.** Where: choose **Apple menu → About This Mac**. Record the macOS version
+   and whether **Chip** says Apple M-series or **Processor** says Intel; this selects the matching Docker installer.
+   Then choose **Apple menu → System Settings → General → Storage** and confirm at least **5 GB available** on the
+   disk used for Docker. This is a course planning allowance, not a measured vendor requirement. Confirm that you
+   can enter your macOS login password or obtain administrator help if Docker asks to install a privileged component.
+   Expected: the release is within Docker's current three-major-version window. Recovery: update macOS or use a
+   supported course computer if it is outside that window. In every command block, copy only the command; do not copy
+   a displayed terminal prompt such as `Mac:~ student$`.
 
 2. **Open Terminal and check virtualization.** Where: **Finder → Applications → Utilities → Terminal**. Type:
 
@@ -186,18 +190,50 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
 
 ### macOS saved SQL files
 
-15. **Run a host SQL file through the mount.** Where: Terminal in `course-environment`. Type:
+15. **Create, save, and run your own macOS SQL file through the mount.** Where: Terminal in
+    `course-environment` and then **TextEdit**.
 
-    ```sh
-    ls -l work/verify.sql
-    docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
-    echo $?
-    ```
+    1. Make an ignored personal copy; this leaves the tracked `work/verify.sql` unchanged:
 
-    Expected: identity `university | student`, count `8`, IDs `101, 102, 103, 104, 105, 201, 202, 301`, and status
-    `0`. The local `work/verify.sql` is exposed read-only inside `db` as `/work/verify.sql`. Recovery: save new SQL
-    files under the local `work` directory, then rerun the command with the matching `/work/...` name. See
-    [Missing or unreadable bind-mounted SQL](troubleshooting.md#missing-or-unreadable-bind-mounted-sql).
+       ```sh
+       cp work/verify.sql work/my-first-query.sql
+       open -e work/my-first-query.sql
+       ```
+
+    2. In **TextEdit**, choose **Format → Make Plain Text**. Replace all file text with the following SQL. Choose
+       **File → Save As**, keep the file in the package's `work` folder with the exact name `my-first-query.sql`, and
+       choose **Unicode (UTF-8)** if TextEdit shows an encoding choice. Save the plain-text file.
+
+       ```sql
+       SELECT 'Saved on my laptop' AS message;
+       ```
+
+    3. Return to Terminal and run the saved host file through its container path:
+
+       ```sh
+       ls -l work/my-first-query.sql
+       docker compose exec -T db psql -X -U student -d university -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
+       echo $?
+       ```
+
+       Expected: `Saved on my laptop` and status `0`.
+
+    4. Return to the same TextEdit document, change only `Saved` to `Edited`, choose **File → Save**, and rerun the
+       preceding Docker command. Expected: `Edited on my laptop`. This observable change confirms that the container
+       used your newly saved host file.
+
+    5. Run the unchanged supplied verification file:
+
+       ```sh
+       ls -l work/verify.sql
+       docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
+       echo $?
+       ```
+
+       Expected: identity `university | student`, count `8`, IDs `101, 102, 103, 104, 105, 201, 202, 301`, and
+       status `0`. The local `work/verify.sql` is exposed read-only inside `db` as `/work/verify.sql`. Recovery: save
+       new SQL files under the local `work` directory, then rerun the command with the matching `/work/...` name. See
+       [Missing or unreadable bind-mounted SQL](troubleshooting.md#missing-or-unreadable-bind-mounted-sql).
 
 ### macOS restart
 

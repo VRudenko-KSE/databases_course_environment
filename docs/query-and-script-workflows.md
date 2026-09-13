@@ -46,7 +46,9 @@ rehearsal: [login screen](images/pgadmin-login.png),
 
 1. Open pgAdmin and sign in with `PGADMIN_DEFAULT_EMAIL` and `PGADMIN_DEFAULT_PASSWORD` from `.env`.
 2. In the left tree, open **Course → Course PostgreSQL**. Enter `POSTGRES_PASSWORD` from `.env` if pgAdmin
-   asks for the database password.
+   asks for the database password. If this registration is missing or was deleted, use
+   [registration-only recovery](troubleshooting.md#course-postgresql-registration-is-missing-or-deleted); it keeps
+   the database and other pgAdmin preferences.
 3. Under **Course PostgreSQL**, expand **Databases**, right-click **university**, choose **Query Tool**, paste the
    identity query below, and press F5 or the Execute button.
 
@@ -74,8 +76,14 @@ Start an interactive SQL session:
 docker compose exec db psql -X -U student -d university
 ```
 
-The `-X` option prevents personal `psqlrc` settings from changing the class session. The normal prompt is
-`university=#`; a continuation prompt is `university-#` until you finish a statement with `;`. At the prompt run:
+Command keys used below: `-X` ignores personal `psqlrc` settings; `-c` runs one SQL command; `-f` reads a SQL
+file; and `-v ON_ERROR_STOP=1` makes `psql` stop and return a nonzero status at the first SQL error. Compose's `-T`
+disables its pseudo-terminal for a non-interactive command, so use it for saved-file runs; omit it for the
+interactive prompt. Container `psql` connects through PostgreSQL's local Unix socket and needs no database-password
+prompt. pgAdmin and DBeaver connect over TCP from another process, so they use the configured database password.
+
+The normal prompt is `university=#`; a continuation prompt is `university-#` until you finish a statement with `;`.
+At the prompt run:
 
 ```sql
 SELECT current_database() AS database_name, current_user AS user_name;
@@ -116,13 +124,20 @@ host shell; `psql` itself is running in the `db` container.
 
 ## Run a saved SQL file
 
-`work/verify.sql` is a file on your laptop. Compose mounts the whole local `work` directory read-only at `/work`
-inside the database container, so its container filename is `/work/verify.sql`. It is not `/work` on your laptop.
+`work/verify.sql` is a tracked verification file on your laptop. Keep it unchanged. Compose mounts the whole
+local `work` directory read-only at `/work` inside the database container, so its container filename is
+`/work/verify.sql`. It is not `/work` on your laptop. The ignore rules let you make your own files under `work/`
+without adding them to the course package.
+
+Before relying on a saved file, create and edit your own `work/my-first-query.sql` with the numbered procedure in
+your [Windows](setup-windows.md#windows-saved-sql-files), [macOS](setup-macos.md#macos-saved-sql-files), or
+[Linux](setup-linux.md#linux-saved-sql-files) guide. It first prints `Saved on my laptop`, then, after you edit and
+save the same file, `Edited on my laptop`. That visible change proves the container ran the host file you saved.
 
 Run the supplied verification file with error stopping enabled:
 
 ```sh
-docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
+docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
 ```
 
 This command is identical in PowerShell and macOS/Linux shells. A checkout path containing spaces is safe because
@@ -132,14 +147,14 @@ PowerShell example:
 
 ```powershell
 Set-Location 'C:\Users\Ada\Documents\Database Course\course-environment'
-docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
+docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
 ```
 
 macOS/Linux example:
 
 ```sh
 cd '/home/ada/Database Course/course-environment'
-docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
+docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
 ```
 
 Expected output contains these results, in order:
@@ -165,7 +180,7 @@ Expected output contains these results, in order:
 To run your Practice 2 work after saving it, use the same route with `/work/practice-02.sql`:
 
 ```sh
-docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/practice-02.sql
+docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/practice-02.sql
 ```
 
 Save the file before running it. If the host file is absent, the container reports that `/work/verify.sql` or
@@ -186,7 +201,7 @@ SELECT 'THIS MUST NOT RUN' AS sentinel;
 Run it with the same saved-file command, changing only the filename:
 
 ```sh
-docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/intentional-error.sql
+docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/intentional-error.sql
 ```
 
 `psql` reports the missing relation, exits with a nonzero status, and does not print `THIS MUST NOT RUN`.

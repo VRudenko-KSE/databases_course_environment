@@ -32,11 +32,17 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
 
 ### Windows preflight
 
-1. **Check Windows and virtualization.** Where: press **Windows key + R**, type `winver`, and press **Enter**. Then
-   open **Task Manager → Performance → CPU** and find **Virtualization**. Expected: the Windows build meets the
-   current Docker matrix and Virtualization says **Enabled**. Recovery: if the build is unsupported, run Windows
-   Update or use a supported course computer. If virtualization says **Disabled**, enable Intel VT-x or AMD-V in
-   BIOS/UEFI using the computer manufacturer's instructions. A managed computer may require IT support.
+1. **Check Windows, CPU, disk, access, and virtualization.** Where: press **Windows key + R**, type `winver`, and
+   press **Enter**. Then open **Settings → System → About** and read **System type**: choose x64 installers for an
+   x64-based Intel/AMD PC and Arm64 installers for an ARM-based PC. Open **File Explorer → This PC** and check the
+   available space on the drive where Docker will store data (normally `C:`). Plan for **5 GB free** for this course;
+   that is a course planning allowance, not a measured vendor requirement. Confirm that you can approve a **User
+   Account Control** prompt or obtain administrator help for WSL and Docker. Finally open **Task Manager →
+   Performance → CPU** and find **Virtualization**. Expected: the Windows build meets the current Docker matrix and
+   Virtualization says **Enabled**. Recovery: if the build is unsupported, run Windows Update or use a supported
+   course computer. If virtualization says **Disabled**, enable Intel VT-x or AMD-V in BIOS/UEFI using the computer
+   manufacturer's instructions. A managed computer may require IT support. In every command block, copy only the
+   command itself; do not copy a displayed `PS C:\...>` prompt.
 
 2. **Install or update WSL 2.** Where: search for **PowerShell**, choose **Run as administrator**, and approve the
 
@@ -195,19 +201,50 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
 
 ### Windows saved SQL files
 
-15. **Run a SQL file saved on Windows through the bind mount.** Where: PowerShell in `course-environment`. First
-    confirm the host file, then run its container path:
+15. **Create, save, and run your own Windows SQL file through the bind mount.** Where: PowerShell in
+    `course-environment` and then **Notepad**.
 
-    ```powershell
-    Get-Item .\work\verify.sql
-    docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
-    $LASTEXITCODE
-    ```
+    1. Make an ignored personal copy; this leaves the tracked `work\verify.sql` unchanged:
 
-    Expected: identity `university | student`, count `8`, course IDs `101, 102, 103, 104, 105, 201, 202, 301`, and
-    status `0`. The Windows folder `work` is mounted read-only as `/work` inside the container. Recovery: save future
-    scripts inside the local `work` folder, make sure the filename ends in `.sql` rather than `.sql.txt`, and see
-    [Missing or unreadable bind-mounted SQL](troubleshooting.md#missing-or-unreadable-bind-mounted-sql).
+       ```powershell
+       Copy-Item .\work\verify.sql .\work\my-first-query.sql
+       notepad .\work\my-first-query.sql
+       ```
+
+    2. In **Notepad**, choose **File → Save As**. Select the package's `work` folder, set **File name** to exactly
+       `my-first-query.sql`, choose **Save as type: All Files (*.*)**, choose **Encoding: UTF-8**, and save. Replace
+       all file text with this plain-text SQL, then press **Ctrl+S**:
+
+       ```sql
+       SELECT 'Saved on my laptop' AS message;
+       ```
+
+    3. Return to PowerShell and run the saved host file through its container path:
+
+       ```powershell
+       Get-Item .\work\my-first-query.sql
+       docker compose exec -T db psql -X -U student -d university -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
+       $LASTEXITCODE
+       ```
+
+       Expected: `Saved on my laptop` and status `0`.
+
+    4. Return to the same Notepad window, change only `Saved` to `Edited`, press **Ctrl+S**, and rerun the preceding
+       Docker command. Expected: `Edited on my laptop`. This observable change confirms that the container used your
+       newly saved host file.
+
+    5. Run the unchanged supplied verification file:
+
+       ```powershell
+       Get-Item .\work\verify.sql
+       docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
+       $LASTEXITCODE
+       ```
+
+       Expected: identity `university | student`, count `8`, course IDs `101, 102, 103, 104, 105, 201, 202, 301`,
+       and status `0`. The Windows folder `work` is mounted read-only as `/work` inside the container. Recovery: save
+       future scripts inside the local `work` folder, make sure the filename ends in `.sql` rather than `.sql.txt`,
+       and see [Missing or unreadable bind-mounted SQL](troubleshooting.md#missing-or-unreadable-bind-mounted-sql).
 
 ### Windows restart
 

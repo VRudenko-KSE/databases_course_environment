@@ -187,6 +187,28 @@ identity query returns an unexpected name.
 SELECT current_database() AS database_name, current_user AS user_name;
 ```
 
+## Course PostgreSQL registration is missing or deleted
+
+**Symptom:** pgAdmin opens, but **Course → Course PostgreSQL** is absent because its registration was deleted or was
+not loaded. Restarting pgAdmin does not recreate a registration that a learner deleted.
+
+**Recover without resetting anything:** on pgAdmin's **Welcome** page, select the **Add New Server** quick link;
+it opens the **Register - Server** form. You can also right-click **Servers** in the Browser tree and choose
+**Register → Server…**. On **General**, enter **Name** `Course PostgreSQL` and, if you want the same organization,
+set **Server group** to `Course`. On **Connection**, enter **Host name/address** `db`, **Port** `5432`,
+**Maintenance database** `university`, **Username** `student`, and the database `POSTGRES_PASSWORD` from `.env`;
+save the registration. The host is `db`, not `localhost`, because this registration connects from the pgAdmin
+container across the Compose network. Then expand **Course → Course PostgreSQL → Databases**, open
+**university → Query Tool**, and run:
+
+```sql
+SELECT current_database() AS database_name, current_user AS user_name;
+```
+
+**Expected:** the query returns `university | student`. This creates only one pgAdmin registration. It preserves the
+PostgreSQL database, other pgAdmin preferences, and host files under `work`; do not use `docker compose down -v` for
+this case.
+
 ## Wrong working directory
 
 **Symptom:** Compose reports that no configuration file was found, or a relative file such as `.env.example` or
@@ -244,9 +266,10 @@ read-only inside the container, so edit files on the host.
 
 ## Verification status
 
-The existing macOS Intel rehearsal observed Docker stop/start recovery with database and pgAdmin state preserved.
-The query-workflow rehearsal observed a space-containing checkout and stop-on-error behavior. The occupied-port
-recovery has not been exercised; it remains a pending Task 6 release check.
+The local candidate's macOS Intel rehearsal observed Docker stop/start recovery with database and pgAdmin state
+preserved. It also observed a space-containing clean local clone, stop-on-error behavior, and occupied-port recovery
+by changing project ports. The canonical evidence and remaining gates are in the
+[release checklist](release-checklist.md#task-6-local-release-candidate-verification).
 
 Windows/WSL, macOS fresh installation, native Linux, Fedora SELinux, Arm, DBeaver GUI/driver, and novice recovery
 walkthroughs remain unverified release checks. The course release must not convert these instructions into claims

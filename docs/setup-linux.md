@@ -34,16 +34,21 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
 ### Linux preflight
 
-1. **Identify the distribution and architecture.** Where: open Terminal and type:
+1. **Identify the distribution, CPU, disk, and access.** Where: open Terminal and type:
 
    ```sh
    cat /etc/os-release
    uname -m
+   df -h "$HOME"
    ```
 
    Expected: the first command names a release in the supported list above. `x86_64` means amd64; `aarch64` means
-   arm64. Recovery: do not paste commands from another branch. Update to a supported release or use a supported
-   course computer if your release is absent. Derivatives such as Linux Mint and Kali are not covered by this guide.
+   arm64. The last command must show at least **5 GB available** on the filesystem that holds your home folder and
+   checkout; this is a course planning allowance, not a measured vendor requirement. Confirm that you can enter your
+   login password for `sudo` or obtain administrator help before installing Docker. Recovery: do not paste commands
+   from another branch. Update to a supported release or use a supported course computer if your release is absent.
+   Derivatives such as Linux Mint and Kali are not covered by this guide. In every command block, copy only the
+   command; do not copy a displayed prompt such as `student@host:~$`.
 
 2. **Check for an existing Docker installation before changing packages.** Where: Terminal. On Ubuntu or Debian,
 
@@ -295,6 +300,26 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
     docker compose ps
     ```
 
+    After repairing the label, inspect the fixture as well as service health. A prior failed first startup can have
+    initialized PostgreSQL before it could read `00-seed.sql`.
+
+    ```sh
+    docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -c \
+      'SELECT COUNT(*) AS course_count FROM practice.courses;'
+    ```
+
+    Expected: `course_count` is `8`. If `practice.courses` is missing or the count is not `8`, the initial seed was
+    interrupted. Once `db` is usable, run the existing scoped practice reset, then verify all eight rows:
+
+    ```sh
+    docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql
+    docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
+    ```
+
+    The scoped reset recreates only `practice`; it keeps other database schemas, pgAdmin preferences, and host
+    `work` files. A full `docker compose down -v` reset is deliberately destructive and is not required for this
+    recovery.
+
     Expected: the containers can read the supplied files while every bind mount remains read-only in Compose.
     Recovery: do not relabel `$HOME`, `/home`, or any system directory. To restore the distribution's default labels
     on only these paths, run `sudo restorecon -RFv ./sql ./work ./pgadmin`. This remedy must remain marked unverified
@@ -338,18 +363,50 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
 ### Linux saved SQL files
 
-23. **Run a host SQL file through the bind mount.** Where: Terminal in `course-environment`. Type:
+23. **Create, save, and run your own Linux SQL file through the bind mount.** Where: Terminal in
+    `course-environment` and then the desktop's **Text Editor** application.
 
-    ```sh
-    ls -l work/verify.sql
-    docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
-    echo $?
-    ```
+    1. Make an ignored personal copy; this leaves the tracked `work/verify.sql` unchanged:
 
-    Expected: identity `university | student`, count `8`, IDs `101, 102, 103, 104, 105, 201, 202, 301`, and status
-    `0`. The host `work` directory is mounted read-only at `/work`. Recovery: save new scripts under host `work` and
-    match the filename after `/work/`; inspect ordinary read permissions with `ls -l` and use the scoped Fedora
-    action 18 only for a confirmed SELinux denial.
+       ```sh
+       cp work/verify.sql work/my-first-query.sql
+       ```
+
+    2. Open **Text Editor** from the desktop application menu. Choose **Open**, select the package's `work` folder,
+       and open `my-first-query.sql`. Keep it as plain text, replace all text with the following SQL, then choose
+       **Save As**. Confirm the exact filename is `my-first-query.sql`, its folder is `work`, and the encoding is
+       **UTF-8** when the editor offers an encoding choice; save the file.
+
+       ```sql
+       SELECT 'Saved on my laptop' AS message;
+       ```
+
+    3. Return to Terminal and run the saved host file through its container path:
+
+       ```sh
+       ls -l work/my-first-query.sql
+       docker compose exec -T db psql -X -U student -d university -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
+       echo $?
+       ```
+
+       Expected: `Saved on my laptop` and status `0`.
+
+    4. Return to the same Text Editor document, change only `Saved` to `Edited`, save, and rerun the preceding Docker
+       command. Expected: `Edited on my laptop`. This observable change confirms that the container used your newly
+       saved host file.
+
+    5. Run the unchanged supplied verification file:
+
+       ```sh
+       ls -l work/verify.sql
+       docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
+       echo $?
+       ```
+
+       Expected: identity `university | student`, count `8`, IDs `101, 102, 103, 104, 105, 201, 202, 301`, and
+       status `0`. The host `work` directory is mounted read-only at `/work`. Recovery: save new scripts under host
+       `work` and match the filename after `/work/`; inspect ordinary read permissions with `ls -l` and use the
+       scoped Fedora action 18 only for a confirmed SELinux denial.
 
 ### Linux restart
 
