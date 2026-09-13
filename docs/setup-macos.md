@@ -103,12 +103,11 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
 
 7. **Obtain the course package.** Where: Terminal. The release announcement will provide the real URL. Replace the
 
-   placeholder before running:
+   placeholder, including the brackets, with the actual URL from the release announcement before running:
 
    ```sh
    cd "$HOME/Documents"
-   COURSE_REPOSITORY_URL='PASTE_THE_URL_FROM_THE_RELEASE_ANNOUNCEMENT_HERE'
-   git clone "$COURSE_REPOSITORY_URL" course-environment
+   git clone <repository-url> course-environment
    ```
 
    Expected: a new `course-environment` directory. Recovery: do not run the placeholder literally. For network,
@@ -120,21 +119,19 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
 
    ```sh
    cd "$HOME/Documents/course-environment"
-   ls compose.yaml .env.example work/verify.sql
    ```
 
-   Adjust the first path if you used another parent folder. Expected: all three paths are printed. Recovery: type
-   `pwd` and `ls`, then enter the folder that contains `compose.yaml`.
+   Adjust the first path if you used another parent folder. Recovery: type `pwd`, then enter the folder that contains
+   `compose.yaml`.
 
 9. **Create the local configuration once.** Where: Terminal in `course-environment`. Type:
 
    ```sh
    cp .env.example .env
-   open -e .env
    ```
 
-   Keep `POSTGRES_DB=university` and `POSTGRES_USER=student`. You may change the two passwords and the loopback host
-   ports before first startup; save and close TextEdit. Expected: `ls -la .env` lists the file. Recovery: if `.env`
+   Open `.env` in your preferred text editor. Keep `POSTGRES_DB=university` and `POSTGRES_USER=student`. You may change
+   the two passwords and the loopback host ports before first startup; save the file. Recovery: if `.env`
    already exists, do not overwrite it unless you mean to replace the local settings.
 
 10. **Start PostgreSQL and pgAdmin.** Where: Terminal in `course-environment`. Type:
@@ -191,18 +188,17 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
 ### macOS saved SQL files
 
 15. **Create, save, and run your own macOS SQL file through the mount.** Where: Terminal in
-    `course-environment` and then **TextEdit**.
+    `course-environment` and your preferred text editor.
 
     1. Make an ignored personal copy; this leaves the tracked `work/verify.sql` unchanged:
 
        ```sh
        cp work/verify.sql work/my-first-query.sql
-       open -e work/my-first-query.sql
        ```
 
-    2. In **TextEdit**, choose **Format → Make Plain Text**. Replace all file text with the following SQL. Choose
-       **File → Save As**, keep the file in the package's `work` folder with the exact name `my-first-query.sql`, and
-       choose **Unicode (UTF-8)** if TextEdit shows an encoding choice. Save the plain-text file.
+    2. Open `work/my-first-query.sql` in your preferred text editor. Keep it as plain text, replace all file text with
+       the following SQL, and save it in the package's `work` folder with the exact name `my-first-query.sql` and UTF-8
+       encoding.
 
        ```sql
        SELECT 'Saved on my laptop' AS message;
@@ -211,21 +207,20 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
     3. Return to Terminal and run the saved host file through its container path:
 
        ```sh
-       ls -l work/my-first-query.sql
-       docker compose exec -T db psql -X -U student -d university -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
+       docker compose exec -T db psql -X -U student -d university \
+         -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
        echo $?
        ```
 
        Expected: `Saved on my laptop` and status `0`.
 
-    4. Return to the same TextEdit document, change only `Saved` to `Edited`, choose **File → Save**, and rerun the
-       preceding Docker command. Expected: `Edited on my laptop`. This observable change confirms that the container
-       used your newly saved host file.
+    4. Return to the same document, change only `Saved` to `Edited`, save, and rerun the preceding Docker
+       command. Expected: `Edited on my laptop`. This observable change confirms that the container used your newly
+       saved host file.
 
     5. Run the unchanged supplied verification file:
 
        ```sh
-       ls -l work/verify.sql
        docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
        echo $?
        ```

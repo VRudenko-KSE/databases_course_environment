@@ -88,7 +88,7 @@ untested route.
 | 8 | Setup blocker diagnosis/recovery | Partial | A second project reproduced `Bind for 127.0.0.1:55433 failed: port is already allocated`; changing its two host ports recovered both services to healthy. Remaining Docker-stopped, missing-PATH, wrong-password, missing-file, and SELinux/bind-mount fault exercises are documented but not all executed on this host. |
 | 9 | Offline/pre-pull path | Partial | `docker compose pull` completed, then a new project reached both health checks with `docker compose up -d --pull never --wait`. No host/daemon network was disabled, so a real disconnected-network run and native arm64 pre-pull remain pending. |
 | 10 | Timed novice walkthrough | Pending | No novice participant was available. No checkpoint time, helper load, individual completion, or Practice 2 fit is claimed. Use the record in the private TA guide before release. |
-| 11 | Published URL/revision and public clone | Pending | No destination remote or access policy was supplied and publication was not authorized. The learner guides therefore retain `COURSE_REPOSITORY_URL`; a student-accessible published clone remains required. |
+| 11 | Published URL/revision and public clone | Pending | No destination remote or access policy was supplied and publication was not authorized. A student-accessible published clone remains required. |
 
 <!-- rumdl-enable MD013 -->
 
@@ -171,6 +171,6 @@ The standalone repository includes only learner files, three observed pgAdmin sc
 untracked learner work. The private TA guide and parent course documents are outside the repository.
 
 Before publication, the instructor must provide the destination URL and access policy, authorize publication,
-replace `COURSE_REPOSITORY_URL` in the release announcement, and test the real URL and released revision as a
+publish the actual URL in the release announcement, and test the real URL and released revision as a
 student. Windows, macOS Apple Silicon, native Docker Desktop on the named Linux distributions, Linux
 KVM/context/file sharing, actual disconnected-network, novice, and published-clone evidence remain release gates.

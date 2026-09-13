@@ -62,7 +62,6 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
    uname -m
    free -h
    systemctl --version
-   ls -l /dev/kvm
    ```
 
    Expected: `uname -m` prints `x86_64`, total memory is at least 4 GB, systemd is present, and `/dev/kvm` exists.
@@ -120,12 +119,11 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
    ```sh
    pwd
-   ls -l docker-desktop-amd64.deb
    sudo apt update
    sudo apt install ./docker-desktop-amd64.deb
    ```
 
-   Expected: `pwd` names the actual download directory, `ls` finds the package, and `apt` installs Docker Desktop
+   Expected: `pwd` names the actual download directory, and `apt` installs Docker Desktop
    plus its required CLI and Compose dependencies. If the browser localized the download directory or renamed the
    package, enter that directory and use the exact saved filename instead; do not run the command from a guessed
    `Downloads` path. `apt` may display a warning about installing a local file; Docker documents that warning as
@@ -177,12 +175,11 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
    ```sh
    pwd
-   ls -l docker-desktop-amd64.deb
    sudo apt update
    sudo apt install ./docker-desktop-amd64.deb
    ```
 
-   Expected: `pwd` names the actual download directory, `ls` finds the package, and `apt` installs Docker Desktop
+   Expected: `pwd` names the actual download directory, and `apt` installs Docker Desktop
    plus its required CLI and Compose dependencies. If the browser localized the directory or renamed the package,
    use its real directory and exact filename. If package resolution reports a conflict, preserve the existing
    installation and its data and ask the computer owner or course team. Continue at action 12; do not run the Fedora
@@ -219,11 +216,10 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
     ```sh
     pwd
-    ls -l docker-desktop-x86_64.rpm
     sudo dnf install ./docker-desktop-x86_64.rpm
     ```
 
-    Expected: `pwd` names the actual download directory, `ls` finds the package, and `dnf` installs Docker Desktop
+    Expected: `pwd` names the actual download directory, and `dnf` installs Docker Desktop
     plus its required CLI and Compose dependencies. If the browser localized the directory or renamed the package,
     use its real directory and exact filename. If package resolution reports a conflict, preserve the existing
     installation and its data and ask the computer owner or course team. Continue at action 12.
@@ -239,7 +235,6 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
     ```sh
     qemu-system-x86_64 --version
-    ls -l /dev/kvm
     getent group kvm
     id -nG
     ```
@@ -258,7 +253,6 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
     ```sh
     command -v docker
-    docker context ls
     docker context show
     docker context use desktop-linux
     docker version
@@ -276,13 +270,12 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
 ### Linux clone configure and start
 
-14. **Obtain the course package.** Where: Terminal. The release announcement will provide the real URL. Replace the
-    placeholder before running:
+14. **Obtain the course package.** Where: Terminal. The release announcement will provide the real URL. Replace
+    `<repository-url>`, including the brackets, with that actual URL before running:
 
     ```sh
     cd "$HOME"
-    COURSE_REPOSITORY_URL='PASTE_THE_URL_FROM_THE_RELEASE_ANNOUNCEMENT_HERE'
-    git clone "$COURSE_REPOSITORY_URL" course-environment
+    git clone <repository-url> course-environment
     ```
 
     Expected: a new `course-environment` directory. Recovery: do not run the placeholder literally. Use
@@ -291,15 +284,14 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
     command. Avoid a network share, remote mount, or removable drive for the first run because Docker Desktop must
     share these host files with its Linux virtual machine.
 
-15. **Enter the package and inspect its required files.** Where: Terminal. Type:
+15. **Enter the package directory.** Where: Terminal. Type:
 
     ```sh
     cd "$HOME/course-environment"
-    ls compose.yaml .env.example work/verify.sql
     ```
 
-    Expected: all three paths print. Recovery: use `pwd` and `ls`, then enter the directory containing
-    `compose.yaml`. Avoid a network share for the first run because host file permissions can differ.
+    Recovery: use `pwd`, then enter the directory containing `compose.yaml`. Avoid a network share for the first
+    run because host file permissions can differ.
 
 16. **Create the local configuration once.** Where: Terminal in `course-environment`. Type:
 
@@ -307,10 +299,9 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
     cp .env.example .env
     ```
 
-    Open `.env` with a text editor from the application menu. Keep `POSTGRES_DB=university` and
+    Open `.env` in your preferred text editor. Keep `POSTGRES_DB=university` and
     `POSTGRES_USER=student`; you may change the two passwords and loopback ports before first startup. Save the file.
-    Expected: `ls -la .env` lists it. Recovery: do not overwrite an existing `.env` unless you intend to replace its
-    local settings.
+    Recovery: do not overwrite an existing `.env` unless you intend to replace its local settings.
 
 17. **Start the environment.** Where: Terminal in `course-environment`. Confirm Docker Desktop is running and
     `docker context show` prints `desktop-linux`, then type:
@@ -324,20 +315,18 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
     Expected: `db` and `pgadmin` show `healthy` and status is `0`. Recovery: run
     `docker compose logs --tail 100` and use [Troubleshooting](troubleshooting.md). If a log says that a supplied host
     file is missing or unreadable, keep the checkout in a local folder under your home directory, allow that folder
-    if Docker Desktop displays a file-sharing prompt, confirm ordinary read access with `ls -l`, save the file, and
-    retry. Do not apply Engine-specific SELinux relabel commands to make Docker Desktop read the checkout.
+    if Docker Desktop displays a file-sharing prompt, confirm that the file has ordinary read access, save the file,
+    and retry. Do not apply Engine-specific SELinux relabel commands to make Docker Desktop read the checkout.
 
 18. **Verify the shared files and repair an interrupted seed without deleting volumes.** Where: Terminal in
     `course-environment`. Type:
 
     ```sh
-    ls -l sql/00-seed.sql work/verify.sql pgadmin/servers.json
-    docker compose exec db ls -l /course/sql/00-seed.sql /work/verify.sql
     docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -c \
       'SELECT COUNT(*) AS course_count FROM practice.courses;'
     ```
 
-    Expected: the files appear on the host and inside the container, and `course_count` is `8`. Docker Desktop shares
+    Expected: `course_count` is `8`. Docker Desktop shares
     the local checkout with its virtual machine; edit the files on the host and let the container read them. If the
     container cannot see them, stop only this project with `docker compose down`, move or clone the package into a
     local directory under your home folder, allow the directory if Desktop prompts for sharing, and start it again.
@@ -394,7 +383,7 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 ### Linux saved SQL files
 
 23. **Create, save, and run your own Linux SQL file through the bind mount.** Where: Terminal in
-    `course-environment` and then the desktop's **Text Editor** application.
+    `course-environment` and your preferred text editor.
 
     1. Make an ignored personal copy; this leaves the tracked `work/verify.sql` unchanged:
 
@@ -402,10 +391,9 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
        cp work/verify.sql work/my-first-query.sql
        ```
 
-    2. Open **Text Editor** from the desktop application menu. Choose **Open**, select the package's `work` folder,
-       and open `my-first-query.sql`. Keep it as plain text, replace all text with the following SQL, then choose
-       **Save As**. Confirm the exact filename is `my-first-query.sql`, its folder is `work`, and the encoding is
-       **UTF-8** when the editor offers an encoding choice; save the file.
+    2. Open `work/my-first-query.sql` in your preferred text editor. Keep it as plain text, replace all text with the
+       following SQL, then save it in the package's `work` folder with the exact name `my-first-query.sql` and UTF-8
+       encoding.
 
        ```sql
        SELECT 'Saved on my laptop' AS message;
@@ -414,28 +402,27 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
     3. Return to Terminal and run the saved host file through its container path:
 
        ```sh
-       ls -l work/my-first-query.sql
-       docker compose exec -T db psql -X -U student -d university -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
+       docker compose exec -T db psql -X -U student -d university \
+         -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
        echo $?
        ```
 
        Expected: `Saved on my laptop` and status `0`.
 
-    4. Return to the same Text Editor document, change only `Saved` to `Edited`, save, and rerun the preceding Docker
+    4. Return to the same document, change only `Saved` to `Edited`, save, and rerun the preceding Docker
        command. Expected: `Edited on my laptop`. This observable change confirms that the container used your newly
        saved host file.
 
     5. Run the unchanged supplied verification file:
 
        ```sh
-       ls -l work/verify.sql
        docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
        echo $?
        ```
 
        Expected: identity `university | student`, count `8`, IDs `101, 102, 103, 104, 105, 201, 202, 301`, and
        status `0`. The host `work` directory is mounted read-only at `/work`. Recovery: save new scripts under host
-       `work` and match the filename after `/work/`; inspect ordinary read permissions with `ls -l` and use the
+       `work` and match the filename after `/work/`; confirm ordinary read permissions and use the
        [missing-file recovery](troubleshooting.md#missing-or-unreadable-bind-mounted-sql) if it is not visible.
 
 ### Linux restart

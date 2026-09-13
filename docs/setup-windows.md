@@ -111,11 +111,10 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
 7. **Obtain the course package.** Where: stay in PowerShell and change to the parent folder where you want to keep
 
    course files, for example `Set-Location "$HOME\Documents"`. The release announcement will supply the real URL.
-   Replace the placeholder text before running these commands:
+   Replace `<repository-url>`, including the brackets, with that actual URL before running:
 
    ```powershell
-   $COURSE_REPOSITORY_URL = 'PASTE_THE_URL_FROM_THE_RELEASE_ANNOUNCEMENT_HERE'
-   git clone $COURSE_REPOSITORY_URL course-environment
+   git clone <repository-url> course-environment
    ```
 
    Expected: a new `course-environment` folder appears. Recovery: do not run the placeholder literally. For an
@@ -127,21 +126,19 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
 
    ```powershell
    Set-Location "$HOME\Documents\course-environment"
-   Get-ChildItem compose.yaml, .env.example, work\verify.sql
    ```
 
-   Adjust the first path if you chose another parent folder. Expected: all three files are listed. Recovery: use
-   `Get-ChildItem` to see the current folder and `Set-Location` to enter the folder that contains `compose.yaml`.
+   Adjust the first path if you chose another parent folder. Recovery: use `Set-Location` to enter the folder that
+   contains `compose.yaml`.
 
 9. **Create the local configuration once.** Where: PowerShell in `course-environment`. Type:
 
    ```powershell
    Copy-Item .env.example .env
-   notepad .env
    ```
 
-   Keep `POSTGRES_DB=university` and `POSTGRES_USER=student`. You may change the two passwords and the loopback host
-   ports before the first start; save and close Notepad. Expected: `Get-Item .env` lists the file. Recovery: if
+   Open `.env` in your preferred text editor. Keep `POSTGRES_DB=university` and `POSTGRES_USER=student`. You may change
+   the two passwords and the loopback host ports before the first start; save the file. Recovery: if
    `.env` already exists, do not overwrite it unless you intend to replace your local settings. Database and
    pgAdmin passwords are separate settings.
 
@@ -202,18 +199,17 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
 ### Windows saved SQL files
 
 15. **Create, save, and run your own Windows SQL file through the bind mount.** Where: PowerShell in
-    `course-environment` and then **Notepad**.
+    `course-environment` and your preferred text editor.
 
     1. Make an ignored personal copy; this leaves the tracked `work\verify.sql` unchanged:
 
        ```powershell
        Copy-Item .\work\verify.sql .\work\my-first-query.sql
-       notepad .\work\my-first-query.sql
        ```
 
-    2. In **Notepad**, choose **File → Save As**. Select the package's `work` folder, set **File name** to exactly
-       `my-first-query.sql`, choose **Save as type: All Files (*.*)**, choose **Encoding: UTF-8**, and save. Replace
-       all file text with this plain-text SQL, then press **Ctrl+S**:
+    2. Open `work\my-first-query.sql` in your preferred text editor. Keep it as plain text, replace all file text
+       with this SQL, and save it in the package's `work` folder with the exact name `my-first-query.sql` and UTF-8
+       encoding:
 
        ```sql
        SELECT 'Saved on my laptop' AS message;
@@ -222,21 +218,20 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
     3. Return to PowerShell and run the saved host file through its container path:
 
        ```powershell
-       Get-Item .\work\my-first-query.sql
-       docker compose exec -T db psql -X -U student -d university -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
+       docker compose exec -T db psql -X -U student -d university `
+         -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
        $LASTEXITCODE
        ```
 
        Expected: `Saved on my laptop` and status `0`.
 
-    4. Return to the same Notepad window, change only `Saved` to `Edited`, press **Ctrl+S**, and rerun the preceding
-       Docker command. Expected: `Edited on my laptop`. This observable change confirms that the container used your
-       newly saved host file.
+    4. Return to the same document, change only `Saved` to `Edited`, save, and rerun the preceding Docker
+       command. Expected: `Edited on my laptop`. This observable change confirms that the container used your newly
+       saved host file.
 
     5. Run the unchanged supplied verification file:
 
        ```powershell
-       Get-Item .\work\verify.sql
        docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
        $LASTEXITCODE
        ```

@@ -51,7 +51,7 @@ enable nested virtualization. Do not guess firmware settings on a managed comput
 **Recover on macOS:** confirm that the Docker installer matches Apple Silicon or Intel. A result of `0` means this
 Mac cannot supply the required Hypervisor framework; use a supported course computer.
 
-**Diagnose on Linux:** confirm that `uname -m` prints `x86_64`, `ls -l /dev/kvm` finds the KVM device,
+**Diagnose on Linux:** confirm that `uname -m` prints `x86_64`, the KVM device is available,
 `qemu-system-x86_64 --version` reports QEMU 5.2 or later, and `id -nG` contains `kvm`. Docker Desktop for Linux does
 not support arm64 or nested virtualization.
 
@@ -69,7 +69,7 @@ installer/firmware recoveries remain release-test items until observed on the na
 **Symptom:** Docker Desktop is open, but a command targets `/var/run/docker.sock`, reports permission denied, uses
 unexpected images or volumes, or cannot connect through the `default` context.
 
-**Diagnose:** run `docker context ls`, `docker context show`, and
+**Diagnose:** run `docker context show` and
 `env | grep -E '^DOCKER_(HOST|CONTEXT)='`. Docker Desktop should supply and select `desktop-linux`; `DOCKER_HOST` or
 `DOCKER_CONTEXT` can override that selection. Its socket is per-user, so a `/var/run/docker.sock` error usually means
 the CLI is still targeting a host Docker Engine.
@@ -99,11 +99,11 @@ insufficient. Reopen Docker Desktop and wait for it to report that Docker is run
 ## Failed clone or no release URL
 
 **Symptom:** `git clone` says repository not found, authentication failed, host could not be resolved, or the text
-`PASTE_THE_URL_FROM_THE_RELEASE_ANNOUNCEMENT_HERE` appears in the error.
+`<repository-url>` appears in the error.
 
 **Diagnose:** confirm that the course release announcement now contains a real repository URL and that you copied
-the entire value into `COURSE_REPOSITORY_URL`. Run `git --version` separately. Do not invent a URL from the course
-name.
+the complete URL in place of `<repository-url>`, including removing its brackets. Run `git --version` separately.
+Do not invent a URL from the course name.
 
 **Recover:** reconnect to the network, sign in through the method named in the release announcement, and retry into
 a parent directory that does not already contain `course-environment`. If no remote has been announced, use the
@@ -228,27 +228,27 @@ this case.
 **Symptom:** Compose reports that no configuration file was found, or a relative file such as `.env.example` or
 `work/verify.sql` is missing.
 
-**Diagnose:** PowerShell: run `Get-Location` and `Get-ChildItem`. macOS/Linux: run `pwd` and `ls`. The current
-directory must be the package directory containing `compose.yaml`.
+**Diagnose:** PowerShell: run `Get-Location`. macOS/Linux: run `pwd`. The current directory must be the package
+directory containing `compose.yaml`.
 
 **Recover:** use `Set-Location 'full\path\to\course-environment'` in PowerShell or
 `cd '/full/path/to/course-environment'` on macOS/Linux. Quote a path that contains spaces. Then run
 `docker compose ps` again.
 
-**Expected:** the directory listing includes `compose.yaml`, `.env.example`, `sql`, `pgadmin`, and `work`.
+**Expected:** Compose can find `compose.yaml` after you enter the package directory.
 
 ## A script was saved as `.sql.txt`
 
 **Symptom:** the editor shows `practice-02.sql`, but Docker reports `/work/practice-02.sql` does not exist. Windows
 may be hiding known filename extensions.
 
-**Diagnose:** in PowerShell run `Get-ChildItem .\work | Select-Object Name`; on macOS/Linux run `ls -la work`.
+**Diagnose:** use the file manager to inspect the filename and extension in the package's `work` folder.
 
 **Recover on Windows:** in File Explorer choose **View → Show → File name extensions**, then rename the file so its
 complete name ends once with `.sql`. Confirm the rename warning. On macOS/Linux, rename the exact file, for example
 `mv work/practice-02.sql.txt work/practice-02.sql`.
 
-**Expected:** the host listing shows `practice-02.sql`, and the container command uses
+**Expected:** the file manager shows the exact name `practice-02.sql`, and the container command uses
 `-f /work/practice-02.sql`.
 
 ## Missing or unreadable bind-mounted SQL
@@ -256,12 +256,8 @@ complete name ends once with `.sql`. Confirm the rename warning. On macOS/Linux,
 **Symptom:** `psql` reports that `/work/<name>.sql` does not exist or cannot be opened, or a service log reports
 permission denied for a supplied bind mount.
 
-**Diagnose:** first confirm the host file exists. PowerShell: `Get-Item .\work\<name>.sql`. macOS/Linux:
-`ls -l work/<name>.sql`. Then list the container view:
-
-```text
-docker compose exec db ls -l /work
-```
+**Diagnose:** first confirm in the file manager that the host file has the expected name in the package's `work`
+folder and ordinary read permissions.
 
 **Recover:** save the file under the package's host `work` directory and make the names match exactly, including
 letter case on Linux. Keep the checkout in a local folder under your home directory that Docker Desktop can share;
@@ -271,7 +267,7 @@ the whole home directory world-writable and do not apply Engine-specific SELinux
 startup left the fixture missing after sharing is repaired, use the
 [scoped Linux seed recovery](setup-linux.md#linux-clone-configure-and-start).
 
-**Expected:** `docker compose exec db ls -l /work` shows the file, and this pattern exits `0`:
+**Expected:** this pattern exits `0`:
 
 ```text
 docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/<name>.sql
