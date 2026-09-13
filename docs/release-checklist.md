@@ -114,6 +114,19 @@ archive filename, checksum, or `docker image load` command to publish. If the in
 distribution, produce and test separate amd64 and arm64 archives; do not infer architecture from a filename or
 claim that loading a tag recreates digest resolution without a real load/start test.
 
+### Clean local clone rehearsal
+
+Local source commit `49111c2` was cloned to
+`/private/tmp/course-release-check/Course Environment Clean Clone`, a path containing spaces. With isolated ports
+55436/55054, startup reached both health checks. Interactive psql showed database `university`, user `student`,
+and table `practice.courses`; the one-off identity query matched; `/work/verify.sql` returned count 8 and all
+eight IDs; and the prompt-only `/work/practice-02.sql` exited 0. A fresh pgAdmin volume showed the preloaded server,
+accepted the database password, and returned the matching identity, count, and IDs. `docker compose stop` shut down
+both services, the clone stayed clean apart from ignored `.env`, and project-scoped volume cleanup succeeded.
+
+This verifies a clean **local** clone of the package content. It does not satisfy acceptance check 11, which requires
+the instructor-authorized, student-accessible published URL and release revision.
+
 ### Package and publication gates
 
 The standalone repository includes only learner files, three observed pgAdmin screenshots, the tracked
