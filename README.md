@@ -16,6 +16,9 @@ pgAdmin connection, and checks container `psql` and a host-saved SQL file. Use
 See the [practice dataset guide](docs/dataset.md) for the four-table fixture, its deliberate edge cases, and an
 optional Week 4 `EXPLAIN (ANALYZE, BUFFERS)` sample.
 
+Work through the [Practice 2 query examples](work/practice-02/README.md) for small, read-only demonstrations of
+`SELECT`, filtering, ordering, and limiting against the seeded `practice.courses` table.
+
 1. Copy `.env.example` to `.env` and choose local ports/passwords before the first startup.
 2. Run `docker compose up -d --wait`.
 3. Open pgAdmin at `http://localhost:5050` (or your `PGADMIN_PORT`) and sign in with its pgAdmin email/password.

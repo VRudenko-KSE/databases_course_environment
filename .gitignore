@@ -5,3 +5,15 @@ work/*
 !work/.gitkeep
 !work/verify.sql
 !work/practice-02.sql
+!work/practice-02/
+work/practice-02/*
+!work/practice-02/README.md
+!work/practice-02/01-select-aliases.sql
+!work/practice-02/02-where-comparisons.sql
+!work/practice-02/03-and-or-parentheses.sql
+!work/practice-02/04-order-by-ties.sql
+!work/practice-02/05-limit-deterministic.sql
+!work/practice-02/06-between-inclusive.sql
+!work/practice-02/07-in-list.sql
+!work/practice-02/08-like-pattern.sql
+!work/practice-02/09-empty-result.sql

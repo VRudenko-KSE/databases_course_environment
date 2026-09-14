@@ -177,6 +177,9 @@ Expected output contains these results, in order:
  301
 ```
 
+The [Practice 2 query examples](../work/practice-02/README.md) provide separate, worked demonstrations and
+instructions for running each saved file.
+
 To run your Practice 2 work after saving it, use the same route with `/work/practice-02.sql`:
 
 ```sh
