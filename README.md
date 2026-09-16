@@ -16,8 +16,9 @@ pgAdmin connection, and checks container `psql` and a host-saved SQL file. Use
 See the [practice dataset guide](docs/dataset.md) for the four-table fixture, its deliberate edge cases, and an
 optional Week 4 `EXPLAIN (ANALYZE, BUFFERS)` sample.
 
-Work through the [Practice 2 query examples](work/practice-02/README.md) for small, read-only demonstrations of
-`SELECT`, filtering, ordering, and limiting against the seeded `practice.courses` table.
+Use the surviving prompt-only [Practice 2 work file](work/practice-02.sql) for your own `SELECT`, filtering,
+ordering, and limiting practice against the seeded `practice.courses` table. Worked examples are separate private TA
+material and are not distributed with this student repository.
 
 1. Copy `.env.example` to `.env` and choose local ports/passwords before the first startup.
 2. Run `docker compose up -d --wait`.
