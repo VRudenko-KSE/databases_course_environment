@@ -198,48 +198,11 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
 
 ### Windows saved SQL files
 
-15. **Create, save, and run your own Windows SQL file through the bind mount.** Where: PowerShell in
-    `course-environment` and your preferred text editor.
-
-    1. Make an ignored personal copy; this leaves the tracked `work\verify.sql` unchanged:
-
-       ```powershell
-       Copy-Item .\work\verify.sql .\work\my-first-query.sql
-       ```
-
-    2. Open `work\my-first-query.sql` in your preferred text editor. Keep it as plain text, replace all file text
-       with this SQL, and save it in the package's `work` folder with the exact name `my-first-query.sql` and UTF-8
-       encoding:
-
-       ```sql
-       SELECT 'Saved on my laptop' AS message;
-       ```
-
-    3. Return to PowerShell and run the saved host file through its container path:
-
-       ```powershell
-       docker compose exec -T db psql -X -U student -d university `
-         -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
-       $LASTEXITCODE
-       ```
-
-       Expected: `Saved on my laptop` and status `0`.
-
-    4. Return to the same document, change only `Saved` to `Edited`, save, and rerun the preceding Docker
-       command. Expected: `Edited on my laptop`. This observable change confirms that the container used your newly
-       saved host file.
-
-    5. Run the unchanged supplied verification file:
-
-       ```powershell
-       docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
-       $LASTEXITCODE
-       ```
-
-       Expected: identity `university | student`, count `8`, course IDs `101, 102, 103, 104, 105, 201, 202, 301`,
-       and status `0`. The Windows folder `work` is mounted read-only as `/work` inside the container. Recovery: save
-       future scripts inside the local `work` folder, make sure the filename ends in `.sql` rather than `.sql.txt`,
-       and see [Missing or unreadable bind-mounted SQL](troubleshooting.md#missing-or-unreadable-bind-mounted-sql).
+15. **Create, save, and run your own Windows SQL file.** Where: PowerShell in `course-environment` and your preferred
+    text editor. Follow [Run your own saved SQL file](query-and-script-workflows.md#run-your-own-saved-sql-file).
+    Save it under `work/`, where your editor and pgAdmin can both open it; container `psql` reads it through
+    `/work/`. Expected: your first run prints `Saved on my computer`, an edited rerun prints
+    `Edited on my computer`, and each successful command exits `0`.
 
 ### Windows restart
 
@@ -252,7 +215,7 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
     ```
 
     Expected: the first command stops both services; the next two bring them back with the database and pgAdmin
-    state preserved. Use `docker compose restart` for a direct restart. Files under `work` remain on Windows in all
+    state preserved. Use `docker compose restart` for a direct restart. Files you saved on Windows remain in all
     cases. Recovery: use `docker compose up -d --wait` if `start` says the containers do not exist.
 
 17. **Finish the readiness check.** Where: PowerShell and the browser. Confirm both services are healthy, pgAdmin

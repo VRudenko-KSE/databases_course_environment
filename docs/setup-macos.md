@@ -187,48 +187,11 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
 
 ### macOS saved SQL files
 
-15. **Create, save, and run your own macOS SQL file through the mount.** Where: Terminal in
-    `course-environment` and your preferred text editor.
-
-    1. Make an ignored personal copy; this leaves the tracked `work/verify.sql` unchanged:
-
-       ```sh
-       cp work/verify.sql work/my-first-query.sql
-       ```
-
-    2. Open `work/my-first-query.sql` in your preferred text editor. Keep it as plain text, replace all file text with
-       the following SQL, and save it in the package's `work` folder with the exact name `my-first-query.sql` and UTF-8
-       encoding.
-
-       ```sql
-       SELECT 'Saved on my laptop' AS message;
-       ```
-
-    3. Return to Terminal and run the saved host file through its container path:
-
-       ```sh
-       docker compose exec -T db psql -X -U student -d university \
-         -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
-       echo $?
-       ```
-
-       Expected: `Saved on my laptop` and status `0`.
-
-    4. Return to the same document, change only `Saved` to `Edited`, save, and rerun the preceding Docker
-       command. Expected: `Edited on my laptop`. This observable change confirms that the container used your newly
-       saved host file.
-
-    5. Run the unchanged supplied verification file:
-
-       ```sh
-       docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
-       echo $?
-       ```
-
-       Expected: identity `university | student`, count `8`, IDs `101, 102, 103, 104, 105, 201, 202, 301`, and
-       status `0`. The local `work/verify.sql` is exposed read-only inside `db` as `/work/verify.sql`. Recovery: save
-       new SQL files under the local `work` directory, then rerun the command with the matching `/work/...` name. See
-       [Missing or unreadable bind-mounted SQL](troubleshooting.md#missing-or-unreadable-bind-mounted-sql).
+15. **Create, save, and run your own macOS SQL file.** Where: Terminal in `course-environment` and your preferred
+    text editor. Follow [Run your own saved SQL file](query-and-script-workflows.md#run-your-own-saved-sql-file).
+    Save it under `work/`, where your editor and pgAdmin can both open it; container `psql` reads it through
+    `/work/`. Expected: your first run prints `Saved on my computer`, an edited rerun prints
+    `Edited on my computer`, and each successful command exits `0`.
 
 ### macOS restart
 
@@ -240,7 +203,7 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
     docker compose ps
     ```
 
-    Expected: both services stop and return; database, pgAdmin state, and host `work` files remain. Use
+    Expected: both services stop and return; database, pgAdmin state, and files on your computer remain. Use
     `docker compose restart` for a direct restart. Recovery: use `docker compose up -d --wait` if `start` says the
     containers do not exist.
 

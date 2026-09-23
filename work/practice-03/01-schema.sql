@@ -1,0 +1,4 @@
+-- P3-S: Build library_lab.borrowers, books, copies, and loans here.
+-- Start with an empty library_lab (sql/practice-03-start.sql).
+-- Use the column names, keys, and rules in docs/practices-03-04.md.
+-- Do not paste the recovery schema until you have attempted your own design.

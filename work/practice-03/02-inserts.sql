@@ -1,0 +1,3 @@
+-- P3-I: Insert the borrowers, books, copies, and loans from the handout.
+-- Insert parents before dependent rows. Use explicit column lists and offsets.
+-- Demonstrate RETURNING on one INSERT. Explain why a second run fails.

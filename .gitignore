@@ -1,6 +1,17 @@
 .env
-
-# Learners may add private working files here; keep the supplied examples.
 work/*
 !work/verify.sql
 !work/practice-02.sql
+!work/practice-03/
+!work/practice-04/
+work/practice-03/*
+work/practice-04/*
+!work/practice-03/01-schema.sql
+!work/practice-03/02-inserts.sql
+!work/practice-03/03-queries.sql
+!work/practice-03/model.md
+!work/practice-04/01-constraints.sql
+!work/practice-04/02-authors.sql
+!work/practice-04/03-repair.sql
+!work/practice-04/04-report.sql
+!work/practice-04/evidence.md

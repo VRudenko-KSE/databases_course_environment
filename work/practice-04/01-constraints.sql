@@ -1,0 +1,18 @@
+-- P4-C: Test C1-C13 independently against the Practice 4 checkpoint.
+-- Predict, execute, record the observed result/error, and name the rule or gap.
+-- Keep each test inside its own BEGIN/ROLLBACK; for an expected error,
+-- select only that case in pgAdmin or use work/practice-04/case.sql with psql.
+
+-- C1: Duplicate borrower card code.
+-- C2: Copy referring to a missing book.
+-- C3: Negative replacement cost.
+-- C4: Zero replacement cost.
+-- C5: Return before borrowing.
+-- C6: NULL return with the return-date CHECK.
+-- C7: NULL full_name.
+-- C8: Empty full_name.
+-- C9: Same copy and start time with a new loan ID.
+-- C10: Different start time that overlaps an existing loan.
+-- C11: Loan of a retired copy.
+-- C12: Due time equal to borrowing, then earlier than borrowing.
+-- C13: Nullable UNIQUE values versus a required code.

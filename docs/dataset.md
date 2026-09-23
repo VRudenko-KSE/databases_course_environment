@@ -83,6 +83,11 @@ See PostgreSQL's documentation for [`EXPLAIN`](https://www.postgresql.org/docs/c
 
 ## Extending and resetting
 
+Practices 3–4 use a separate student-built `library_lab` schema described in
+[the library workshop handout](practices-03-04.md). Its start and checkpoint commands leave this university fixture
+unchanged. The library recovery schema is supplied for teaching continuity; the student exercise begins with a
+narrative and an empty diagram/workspace.
+
 Add offerings with stable new `offering_id` values, then add enrolments that reference those IDs and existing student
 IDs. Departments or instructors can become separate entities when a later topic requires them.
 

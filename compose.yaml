@@ -9,12 +9,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-student}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-course-local-password}
     ports:
-      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_BIND_ADDRESS:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql
       - ./sql:/course/sql:ro
-      - ./sql/00-seed.sql:/docker-entrypoint-initdb.d/00-seed.sql:ro
       - ./work:/work:ro
+      - ./sql/00-seed.sql:/docker-entrypoint-initdb.d/00-seed.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
@@ -27,11 +27,13 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-student@course.local}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-course-pgadmin-password}
       PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: "['local']"
+      PGADMIN_CONFIG_SHARED_STORAGE: "[{'name': 'Course work', 'path': '/work', 'restricted_access': False}]"
     ports:
-      - "127.0.0.1:${PGADMIN_PORT:-5050}:80"
+      - "${PGADMIN_BIND_ADDRESS:-127.0.0.1}:${PGADMIN_PORT:-5050}:80"
     volumes:
       - pgadmin-data:/var/lib/pgadmin
       - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+      - ./work:/work
     depends_on:
       db:
         condition: service_healthy

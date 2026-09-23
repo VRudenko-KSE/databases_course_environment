@@ -274,7 +274,18 @@ docker compose exec db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /w
 ```
 
 Creating a file after the containers start does not require a restart; save it and rerun the command. The mount is
-read-only inside the container, so edit files on the host.
+read-only in PostgreSQL; edit files on the host or in pgAdmin's **Course work** shared storage.
+
+## pgAdmin cannot save to Course work
+
+**Symptom:** pgAdmin can open a file under **Course work** but cannot save or upload there.
+
+**Diagnose:** confirm the host folder is `course-environment/work/` and the pgAdmin service has a `./work:/work`
+mount in `compose.yaml`. On Linux Docker Engine, pgAdmin's container user has UID 5050.
+
+**Recover:** follow [Share files with pgAdmin](query-and-script-workflows.md#share-files-with-pgadmin) to grant
+that UID write access while keeping your own account able to edit the files. On Docker Desktop, move the checkout
+to a locally shared folder if it currently lives on a network or removable drive.
 
 ## Verification status
 

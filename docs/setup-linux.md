@@ -337,7 +337,7 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
     ```sh
     docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql
-    docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
+    docker compose exec db psql -X -U student -d university -c "SELECT COUNT(*) FROM practice.courses;"
     ```
 
     The scoped reset recreates only `practice`; it keeps other database schemas, pgAdmin preferences, Docker Desktop
@@ -382,48 +382,11 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
 ### Linux saved SQL files
 
-23. **Create, save, and run your own Linux SQL file through the bind mount.** Where: Terminal in
-    `course-environment` and your preferred text editor.
-
-    1. Make an ignored personal copy; this leaves the tracked `work/verify.sql` unchanged:
-
-       ```sh
-       cp work/verify.sql work/my-first-query.sql
-       ```
-
-    2. Open `work/my-first-query.sql` in your preferred text editor. Keep it as plain text, replace all text with the
-       following SQL, then save it in the package's `work` folder with the exact name `my-first-query.sql` and UTF-8
-       encoding.
-
-       ```sql
-       SELECT 'Saved on my laptop' AS message;
-       ```
-
-    3. Return to Terminal and run the saved host file through its container path:
-
-       ```sh
-       docker compose exec -T db psql -X -U student -d university \
-         -v ON_ERROR_STOP=1 -f /work/my-first-query.sql
-       echo $?
-       ```
-
-       Expected: `Saved on my laptop` and status `0`.
-
-    4. Return to the same document, change only `Saved` to `Edited`, save, and rerun the preceding Docker
-       command. Expected: `Edited on my laptop`. This observable change confirms that the container used your newly
-       saved host file.
-
-    5. Run the unchanged supplied verification file:
-
-       ```sh
-       docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/verify.sql
-       echo $?
-       ```
-
-       Expected: identity `university | student`, count `8`, IDs `101, 102, 103, 104, 105, 201, 202, 301`, and
-       status `0`. The host `work` directory is mounted read-only at `/work`. Recovery: save new scripts under host
-       `work` and match the filename after `/work/`; confirm ordinary read permissions and use the
-       [missing-file recovery](troubleshooting.md#missing-or-unreadable-bind-mounted-sql) if it is not visible.
+23. **Create, save, and run your own Linux SQL file.** Where: Terminal in `course-environment` and your preferred
+    text editor. Follow [Run your own saved SQL file](query-and-script-workflows.md#run-your-own-saved-sql-file).
+    Save it under `work/`, where your editor and pgAdmin can both open it; container `psql` reads it through
+    `/work/`. See the shared-folder permission step there if pgAdmin cannot save. Expected: your first run prints `Saved on my computer`, an edited rerun prints
+    `Edited on my computer`, and each successful command exits `0`.
 
 ### Linux restart
 
@@ -435,7 +398,7 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
     docker compose ps
     ```
 
-    Expected: both services return and database, pgAdmin state, and host work files remain. Use
+    Expected: both services return and database, pgAdmin state, and your own host files remain. Use
     `docker compose restart` for a direct restart. Recovery: use `docker compose up -d --wait` if the containers do
     not yet exist. Never run a machine-wide Docker cleanup command.
 
