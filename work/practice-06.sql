@@ -1,0 +1,7 @@
+-- Practice 6: save solutions below each label. The fresh-start migration preloads library_p6.
+-- P6-1: Join mixed credits to books and authors to compare repeated facts.
+-- P6-2: Write one live/stored comparison query; rerun after the supplied update and refresh.
+-- P6-3: Write UNION for the two offerings; compare with the supplied UNION ALL query.
+-- P6-4: Build one CTE offering summary for 1001, 1007, and 1008.
+-- Optional P6-5: Use EXCEPT to find students without enrolments.
+-- Optional P6-6: Classify grouped offerings with a derived table, scalar subquery, CASE, and COALESCE.

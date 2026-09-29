@@ -1,0 +1,7 @@
+-- Practice 5: save solutions below each label. The fresh-start migration preloads library_p5.
+-- P5-1: Join copies to books and explain the zero-cost retired copy.
+-- P5-2: Left join books, book_authors, and authors, retaining book 30.
+-- P5-3: Left join students to enrolments, including student 7.
+-- P5-4: Report enrolments, grades, and averages for every course.
+-- Optional P5-5: Autumn offering report with WHERE and HAVING.
+-- Optional P5-6: Students in multiple offerings of one course.

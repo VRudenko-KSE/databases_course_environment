@@ -1,3 +1,5 @@
+\set ON_ERROR_STOP on
+-- First migration: the university fixture for Practices 1-2 and later SQL work.
 CREATE SCHEMA practice;
 
 ALTER ROLE student IN DATABASE university SET search_path = practice, public;

@@ -2,6 +2,8 @@
 work/*
 !work/verify.sql
 !work/practice-02.sql
+!work/practice-05.sql
+!work/practice-06.sql
 !work/practice-03/
 !work/practice-04/
 work/practice-03/*

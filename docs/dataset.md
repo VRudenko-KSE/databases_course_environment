@@ -88,6 +88,12 @@ Practices 3–4 use a separate student-built `library_lab` schema described in
 unchanged. The library recovery schema is supplied for teaching continuity; the student exercise begins with a
 narrative and an empty diagram/workspace.
 
+[Practices 5–6](practices-05-06.md) use separate `library_p5` and `library_p6` schemas created automatically by
+the numbered `sql/migrations/` scripts on a fresh PostgreSQL volume. Both begin with three author links; P6 also
+has mixed-fact repair inputs and live/stored loan reports. The
+[Practice 3 fresh-start prerequisite](practices-03-04.md#fresh-start-prerequisite) resets the volume and verifies
+all three stages. Restarting with an existing volume does not replay the migrations.
+
 Add offerings with stable new `offering_id` values, then add enrolments that reference those IDs and existing student
 IDs. Departments or instructors can become separate entities when a later topic requires them.
 

@@ -332,8 +332,8 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
     local directory under your home folder, allow the directory if Desktop prompts for sharing, and start it again.
 
     If `practice.courses` is missing or the count is not `8`, a failed first startup may have initialized PostgreSQL
-    before it read `00-seed.sql`. Once file sharing works and `db` is usable, run the existing scoped practice reset,
-    then verify all eight rows:
+    before it read `sql/migrations/00-university.sql`. Once file sharing works and `db` is usable, run the
+    existing scoped practice reset, then verify all eight rows:
 
     ```sh
     docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql
@@ -385,8 +385,8 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 23. **Create, save, and run your own Linux SQL file.** Where: Terminal in `course-environment` and your preferred
     text editor. Follow [Run your own saved SQL file](query-and-script-workflows.md#run-your-own-saved-sql-file).
     Save it under `work/`, where your editor and pgAdmin can both open it; container `psql` reads it through
-    `/work/`. See the shared-folder permission step there if pgAdmin cannot save. Expected: your first run prints `Saved on my computer`, an edited rerun prints
-    `Edited on my computer`, and each successful command exits `0`.
+    `/work/`. See the shared-folder permission step there if pgAdmin cannot save. Expected: your first run prints
+    `Saved on my computer`, an edited rerun prints `Edited on my computer`, and each successful command exits `0`.
 
 ### Linux restart
 

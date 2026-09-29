@@ -7,10 +7,30 @@ break, and keep an individual diagram, SQL files, predictions, and exit answers.
 The TA demonstrates with the same campus lending library. This is a separate
 practice scenario, not Assignment 1's workshop-registration model or a solution to its CSV-loading task.
 
+## Fresh-start prerequisite
+
+Before Practice 3, save your host files under `work/`, then run these commands from `course-environment`:
+
+```sh
+docker compose down -v
+docker compose up -d --wait
+docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/verify-practice-data.sql
+```
+
+The first command deletes this Compose project's PostgreSQL and pgAdmin volumes, including database edits and
+pgAdmin preferences. Host files in `work/` remain. On the fresh database, PostgreSQL automatically runs the
+numbered scripts in `sql/migrations/`: the original university fixture, the populated Practice 3–4 library,
+and the Practice 5 and 6 library fixtures. The last command must print `Practice data ready`. This fresh start
+and check are required before beginning Practice 3. Later `docker compose up` calls with the same volume do not
+replay migrations; repeat the full three-command sequence if the initial data must be restored.
+
+Practice 3 then clears only `library_lab` so you can build its model yourself. The preloaded `library_p5` and
+`library_p6` remain available for later work, and `practice` holds the university data.
+
 ## Prepare and Run
 
-Use the existing Docker environment. From `course-environment`, run `docker compose up -d --wait` and
-`docker compose ps`. Connect pgAdmin's Query Tool to `university` as `student`. New tables use `library_lab`.
+After the prerequisite, run `docker compose ps` and connect pgAdmin's Query Tool to `university` as `student`.
+Your Practice 3 tables use `library_lab`.
 
 Start Practice 3 with an empty workspace:
 
@@ -86,9 +106,9 @@ the two loan events for borrower 1 and copy 101. Record your reasoning in `work/
 
 ### P3-T — Choose Data Types Experimentally
 
-Create `work/practice-03/types.sql` if you want to save your experiments. For each comparison below, record a prediction,
-observed value or error, chosen type, and reason. Split the comparisons within your pair, then explain every result
-to one another.
+Create `work/practice-03/types.sql` if you want to save your experiments. For each comparison below, record a
+prediction, observed value or error, chosen type, and reason. Split the comparisons within your pair, then explain
+every result to one another.
 
 <!-- rumdl-disable MD013 -->
 
@@ -131,7 +151,8 @@ Adding a row changes the instance. Adding a rule or column changes the schema. G
 
 ### P3-I — Insert the Fixture
 
-Write the inserts for all rows in the tables below in `work/practice-03/02-inserts.sql`. Insert parents before dependent rows.
+Write the inserts for all rows in the tables below in `work/practice-03/02-inserts.sql`.
+Insert parents before dependent rows.
 Explain the parent-first order before running the file.
 Use the supplied integer IDs for reproducibility and demonstrate `RETURNING` on one insert. Duplicate names are
 intentional. Do not combine or discard the two people.
@@ -250,8 +271,8 @@ so run their setup and your solution in one Query Tool session, or run the whole
 These are small variations, not extra application
 features. Keep every original association and distinguish a deliberate business rule from a sample coincidence.
 
-- **R1:** An array cell `ARRAY[201, 202]` hides separate book/author links. Write the three association rows and compare with
-  P4-A. Explain how the row key supports individual links. This is the 1NF connection.
+- **R1:** An array cell `ARRAY[201, 202]` hides separate book/author links. Write the three association rows and
+  compare them with P4-A. Explain how the row key supports individual links. This is the 1NF connection.
 - **R2:** A book/author table repeats title and author name. Rename only one copy of a title; show the inconsistency.
   Explain how adding an unlinked book and deleting its last author link expose two more problems. Split the facts
   according to their dependencies, then join the results to reconstruct all three original rows. This is the 2NF

@@ -1,6 +1,6 @@
 # Course PostgreSQL environment
 
-This package supplies PostgreSQL, pgAdmin, and the course's starter university data through Docker Compose. Run
+This package supplies PostgreSQL, pgAdmin, and the course's practice data through Docker Compose. Run
 commands from this directory, which contains `compose.yaml`. PostgreSQL and `psql` run only inside Docker.
 
 Start with the complete guide for your computer:
@@ -25,12 +25,22 @@ class against `practice.courses`. Run the saved file through `/work` as shown in
 
 For the next pair, use [Practices 3–4: Design, Build, and Improve a Library Database](docs/practices-03-04.md).
 It includes draw.io instructions, student SQL files, and separate empty/populated recovery checkpoints in the
-disposable `library_lab` schema. Both sessions use the full 80 minutes for demonstrations and exercises.
+disposable `library_lab` schema. Before Practice 3, complete its required fresh-volume reset and data verification.
+Both sessions use the full 80 minutes for demonstrations and exercises.
+
+For Practices 5–6, check the [fresh-start prerequisite](docs/practices-03-04.md#fresh-start-prerequisite), then open
+the separate [Practice 5 tasks](docs/practices-05-06.md#practice-5-tasks) and
+[Practice 6 tasks](docs/practices-05-06.md#practice-6-tasks). The automatically run
+`sql/migrations/` scripts create separate `library_p5` and `library_p6` schemas on first
+database creation. Run these queries in your chosen SQL interface (pgAdmin, DBeaver, or PyCharm), save solutions
+and captured output under `work/`, and compare a TA or student solution after each writing period. The first
+exercises revisit Practice 4. Each session also
+offers two optional SQL exercises for early finishers. Its final 20 minutes remain for Assignment 1 support.
 
 The host `work/` directory is shared with pgAdmin as **Course work** and with PostgreSQL as `/work` (read only in
-the database container). Save SQL in `work/` using your local editor or pgAdmin's file dialog, then run it through
-container `psql`. On Linux, grant pgAdmin's container user (UID 5050) write access to `work/` before saving from
-pgAdmin; see [Query and script workflows](docs/query-and-script-workflows.md#share-files-with-pgadmin).
+the database container). Save SQL in `work/` using your local editor or SQL interface. Practices 5–6 use the
+chosen interface to run each query. On Linux, grant pgAdmin's container user (UID 5050) write access to `work/`
+before saving from pgAdmin; see [Query and script workflows](docs/query-and-script-workflows.md#share-files-with-pgadmin).
 
 1. Copy `.env.example` to `.env` and choose local ports/passwords before the first startup.
 2. Run `docker compose up -d --wait`.
@@ -53,10 +63,11 @@ public interface; change both sample passwords before exposing them. On a person
 | Interactive SQL | `docker compose exec db psql -X -U student -d university` | `university=#` prompt |
 | One-off identity query | `docker compose exec db psql -X -U student -d university -c "SELECT current_database(), current_user;"` | `university`, `student` |
 | Verify fixture | `docker compose exec db psql -X -U student -d university -c "SELECT COUNT(*) FROM practice.courses;"` | Count `8` |
+| Verify fresh practice migrations | `docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/verify-practice-data.sql` | `Practice data ready` |
 | Reset practice schema | `docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql` | Original `practice` fixture restored |
 | Stop services | `docker compose stop` | Volumes remain for the next start |
 | Restart services | `docker compose restart` | Services restart; volumes remain |
-| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Database and pgAdmin volumes recreated; host files outside Compose remain |
+| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university, P3–4, and P5–6 data; host files remain |
 
 <!-- rumdl-enable MD013 -->
 

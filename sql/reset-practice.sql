@@ -4,5 +4,5 @@
 -- Host SQL files and other database schemas are not removed.
 BEGIN;
 DROP SCHEMA IF EXISTS practice CASCADE;
-\i /course/sql/00-seed.sql
+\i /course/sql/migrations/00-university.sql
 COMMIT;
