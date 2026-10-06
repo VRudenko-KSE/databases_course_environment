@@ -1,5 +1,27 @@
 # Release Checklist
 
+## Current Practices 7–8 package
+
+The learner package now includes [Practical PostgreSQL Reporting and Window Functions](practices-07-08.md),
+the separate [SQL guide](practices-07-08-sql-guide.md),
+prompt-only `work/practice-07.sql` and `work/practice-08.sql`, and their numbered fixtures and scoped checkpoint.
+Both practices have eight tasks: four core and four optional. The Execute columns specify the query steps,
+output columns and ordering; Explain and save specifies the cases and reasoning to retain with each result.
+Reference answers and private rehearsal evidence remain outside the learner repository.
+
+The instructor's **2026-10-06** isolated PostgreSQL 18.6 rehearsal executed all sixteen P7–8 reference
+queries and all twelve existing P5–6 answer queries. It checked the current P7 baseline of 7 students,
+4 workshops, 10 registrations and 18 events, and the P8 baseline of 14 results. Report checks covered
+UTC period boundaries, quiet days, all-history snapshots, event ratios, ties, NULLs and window frames.
+The scoped P7–8 checkpoint preserved earlier/storage edits; resetting the canonical practice schema
+preserved both lab fixtures and constraints. The P9 scan baseline was rehearsed separately from the
+P7 reporting tasks in the same isolated database.
+
+These SQL checks do not replace the historical GUI and platform evidence below. Native platform setup,
+timed novice delivery and a student-accessible published clone remain pending where previously recorded.
+For the current documentation revision, check local links, task numbering, fixture counts and Markdown
+formatting before packaging. Do not copy private solution files into the learner package.
+
 ## Container image evidence
 
 Manifest inspection date: **2026-09-12**.
@@ -166,9 +188,11 @@ the instructor-authorized, student-accessible published URL and release revision
 
 ### Package and publication gates
 
-The standalone repository includes only learner files, three observed pgAdmin screenshots, the tracked
-`work/verify.sql`, and the prompt-only `work/practice-02.sql`. Its ignore rules exclude local `.env` and
-untracked learner work. The private TA guide and parent course documents are outside the repository.
+The current standalone repository includes learner guides, three observed pgAdmin screenshots,
+`work/verify.sql`, practice starters through P8, numbered SQL fixtures and documented recovery checkpoints.
+Its ignore rules exclude local `.env` and untracked learner work. The private TA guides, reference answers
+and parent course documents are outside the repository. The dated Task 6 clone rehearsal above used its
+historical package revision; it does not establish a published clone of the current P7–8 additions.
 
 Before publication, the instructor must provide the destination URL and access policy, authorize publication,
 publish the actual URL in the release announcement, and test the real URL and released revision as a

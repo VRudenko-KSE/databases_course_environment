@@ -20,7 +20,8 @@ docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f
 The first command deletes this Compose project's PostgreSQL and pgAdmin volumes, including database edits and
 pgAdmin preferences. Host files in `work/` remain. On the fresh database, PostgreSQL automatically runs the
 numbered scripts in `sql/migrations/`: the original university fixture, the populated Practice 3–4 library,
-and the Practice 5 and 6 library fixtures. The last command must print `Practice data ready`. This fresh start
+the Practice 5 and 6 library fixtures, the Practice 7–8 activity/window labs, and the storage fixture.
+The last command must print `Practice data ready`. This fresh start
 and check are required before beginning Practice 3. Later `docker compose up` calls with the same volume do not
 replay migrations; repeat the full three-command sequence if the initial data must be restored.
 

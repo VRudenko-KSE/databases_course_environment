@@ -16,8 +16,8 @@ Each guide installs Git and Docker Desktop, obtains this standalone package, sta
 pgAdmin connection, and checks container `psql` and a host-saved SQL file. Use
 [Troubleshooting](docs/troubleshooting.md) when an expected result differs.
 
-See the [practice dataset guide](docs/dataset.md) for the four-table fixture, its deliberate edge cases, and an
-optional Week 4 `EXPLAIN (ANALYZE, BUFFERS)` sample.
+See the [practice dataset guide](docs/dataset.md) for the canonical four-table fixture, the separate P7 reporting
+and P8 window fixtures, their deliberate edge cases, and an optional P9 `EXPLAIN (ANALYZE, BUFFERS)` sample.
 
 For Practice 2, edit `work/practice-02.sql` and answer the `SELECT`, filtering, ordering, and limiting prompts from
 class against `practice.courses`. Run the saved file through `/work` as shown in
@@ -37,9 +37,22 @@ and captured output under `work/`, and compare a TA or student solution after ea
 exercises revisit Practice 4. Each session also
 offers two optional SQL exercises for early finishers. Its final 20 minutes remain for Assignment 1 support.
 
+For Practices 7–8, use [Practical PostgreSQL Reporting and Window Functions](docs/practices-07-08.md)
+and the separate [SQL guide](docs/practices-07-08-sql-guide.md).
+Each has eight tasks: four core and four optional, executed in PostgreSQL. P7 builds calendar metrics and
+latest-state reports with FILTER, generate_series and DISTINCT ON; its extensions use EXISTS, STRING_AGG,
+weekly buckets and safe ratios. P8 uses all 80 minutes for window aggregates, ranking, top-N and running totals,
+with optional LAG, moving average, NTILE and first/last values. The handout explains adding only missing
+activity/window migrations to existing databases and recovering an older P7 baseline. Each task's Execute
+column names the query steps, required columns and ordering; Explain and save gives concrete cases to trace.
+Save queries in `work/practice-07.sql` and `work/practice-08.sql`, with labelled output exports and reasoning
+under `work/`. P7 retains its A2 orientation studio;
+A2 opens after P8, with the next studio in P9.
+
 The host `work/` directory is shared with pgAdmin as **Course work** and with PostgreSQL as `/work` (read only in
 the database container). Save SQL in `work/` using your local editor or SQL interface. Practices 5–6 use the
-chosen interface to run each query. On Linux, grant pgAdmin's container user (UID 5050) write access to `work/`
+chosen interface to run each query, as do Practices 7–8. On Linux, grant pgAdmin's container user (UID 5050)
+write access to `work/`
 before saving from pgAdmin; see [Query and script workflows](docs/query-and-script-workflows.md#share-files-with-pgadmin).
 
 1. Copy `.env.example` to `.env` and choose local ports/passwords before the first startup.
@@ -67,7 +80,7 @@ public interface; change both sample passwords before exposing them. On a person
 | Reset practice schema | `docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql` | Original `practice` fixture restored |
 | Stop services | `docker compose stop` | Volumes remain for the next start |
 | Restart services | `docker compose restart` | Services restart; volumes remain |
-| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university, P3–4, and P5–6 data; host files remain |
+| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university and P3–8 fixtures; host files remain |
 
 <!-- rumdl-enable MD013 -->
 

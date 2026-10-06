@@ -287,6 +287,26 @@ mount in `compose.yaml`. On Linux Docker Engine, pgAdmin's container user has UI
 that UID write access while keeping your own account able to edit the files. On Docker Desktop, move the checkout
 to a locally shared folder if it currently lives on a network or removable drive.
 
+## P7–8 lab tables are missing or have old fixture counts
+
+**Symptom:** a task reports `relation "activity_lab.registration_events" does not exist` or
+`relation "reporting_lab.results" does not exist`, or the handout's readiness counts do not match.
+
+**Diagnose:** confirm that your SQL connection uses database `university` and that your local package
+contains migrations 40 and 50. Run the schema-presence and count queries in
+[Prepare the fixture](practices-07-08.md#prepare-the-fixture). A running database volume does not replay
+new or edited migration files after `docker compose restart`.
+
+**Recover:** if a lab schema is missing, run only its installation command from the handout: 40 for
+reporting_lab, 50 for activity_lab. If the schema already exists with an older baseline, save any edits
+in both labs before using the handout's scoped P7–8 checkpoint. That checkpoint replaces both lab schemas;
+it preserves earlier practice schemas, storage_lab and host files. Coordinate recovery on a shared instance
+with the TA instead of resetting a shared fixture yourself.
+
+**Expected:** activity_lab contains 7 students, 4 workshops, 10 registrations and 18 events;
+reporting_lab.results contains 14 rows. The newer P7 fixture includes an active registration with only
+August history. Do not rerun an already installed CREATE SCHEMA migration as an update command.
+
 ## Verification status
 
 The local candidate's macOS Intel rehearsal observed Docker stop/start recovery with database and pgAdmin state

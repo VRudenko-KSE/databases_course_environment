@@ -1,8 +1,13 @@
 # Query and script workflows
 
-Run Compose commands from `course-environment`, the directory containing `compose.yaml`. PostgreSQL and `psql` run in the `db` container. The host's `work/` directory is mounted at `/work` in both containers. PostgreSQL receives it read only; pgAdmin can read and write it. Use `work/` for SQL, diagrams, notes, and exported files you want to keep on your computer.
+Run Compose commands from `course-environment`, the directory containing `compose.yaml`. PostgreSQL and `psql`
+run in the `db` container. The host's `work/` directory is mounted at `/work` in both containers. PostgreSQL
+receives it read only; pgAdmin can read and write it. Use `work/` for SQL, diagrams, notes, and exported files
+you want to keep on your computer.
 
-The supplied pgAdmin registration is **Course PostgreSQL**. It connects to host `db`, port `5432`, database `university`, as database user `student`. pgAdmin's web login uses `PGADMIN_DEFAULT_EMAIL` and `PGADMIN_DEFAULT_PASSWORD` in `.env`; PostgreSQL uses `POSTGRES_PASSWORD`.
+The supplied pgAdmin registration is **Course PostgreSQL**. It connects to host `db`, port `5432`, database
+`university`, as database user `student`. pgAdmin's web login uses `PGADMIN_DEFAULT_EMAIL` and
+`PGADMIN_DEFAULT_PASSWORD` in `.env`; PostgreSQL uses `POSTGRES_PASSWORD`.
 
 ## Start and check the environment
 
@@ -13,7 +18,9 @@ docker compose up -d --wait
 docker compose ps
 ```
 
-Both services should be healthy. With the default port, open `http://localhost:5050` on the same computer. In pgAdmin, open **Course → Course PostgreSQL → Databases → university → Query Tool**. Enter the database password if asked and run:
+Both services should be healthy. With the default port, open `http://localhost:5050` on the same computer. In
+pgAdmin, open **Course → Course PostgreSQL → Databases → university → Query Tool**. Enter the database
+password if asked and run:
 
 ```sql
 SELECT current_database() AS database_name, current_user AS user_name;
@@ -25,16 +32,26 @@ Expect `university | student`, count `8`, and IDs `101, 102, 103, 104, 105, 201,
 
 ## Share files with pgAdmin
 
-In pgAdmin's Query Tool, use **Open File** to load a `.sql` file or **Save As** to write one. In the file dialog, choose **Course work** under shared storage, then select the path below it, such as `practice-03/01-schema.sql`. The same file appears on your computer at `course-environment/work/practice-03/01-schema.sql`. pgAdmin's **Storage Manager** also shows **Course work**; use it to upload or download files. Save in the Query Tool before editing the same file locally, and reopen it after local edits so you do not overwrite newer work.
+In pgAdmin's Query Tool, use **Open File** to load a `.sql` file or **Save As** to write one. In the file
+dialog, choose **Course work** under shared storage, then select the path below it, such as
+`practice-03/01-schema.sql`. The same file appears on your computer at
+`course-environment/work/practice-03/01-schema.sql`. pgAdmin's **Storage Manager** also shows **Course work**;
+use it to upload or download files. Save in the Query Tool before editing the same file locally, and reopen it
+after local edits so you do not overwrite newer work.
 
-On Linux Docker Engine, pgAdmin runs inside the container as UID 5050. If pgAdmin says it cannot write to `work/`, grant that UID access **on the host** from `course-environment`, then restart the services:
+On Linux Docker Engine, pgAdmin runs inside the container as UID 5050. If pgAdmin says it cannot write to
+`work/`, grant that UID access **on the host** from `course-environment`, then restart the services:
 
 ```sh
 sudo setfacl -R -m u:5050:rwX,u:$(id -u):rwX work
 sudo find work -type d -exec setfacl -m d:u:5050:rwx,d:u:$(id -u):rwx {} +
 ```
 
-Install the `acl` package if `setfacl` is unavailable. Your own account retains ownership; the access and default ACLs let both you and pgAdmin edit existing and newly created files. If a shared course server has several students, use each student's own copy of `course-environment` and `work/`; a single shared folder would expose everyone's files to the same pgAdmin login. Docker Desktop on Windows/macOS generally maps host files through its file sharing layer; check that `work/` is in a shared location if a save fails.
+Install the `acl` package if `setfacl` is unavailable. Your own account retains ownership; the access and
+default ACLs let both you and pgAdmin edit existing and newly created files. If a shared course server has
+several students, use each student's own copy of `course-environment` and `work/`; a single shared folder
+would expose everyone's files to the same pgAdmin login. Docker Desktop on Windows/macOS generally maps host
+files through its file sharing layer; check that `work/` is in a shared location if a save fails.
 
 See pgAdmin's [shared storage setting](https://www.pgadmin.org/docs/pgadmin4/9.17/config_py.html)
 and [container file permissions](https://www.pgadmin.org/docs/pgadmin4/9.17/container_deployment.html).
@@ -45,7 +62,8 @@ and [container file permissions](https://www.pgadmin.org/docs/pgadmin4/9.17/cont
 docker compose exec db psql -X -U student -d university
 ```
 
-At `university=#`, enter SQL ending in a semicolon. `\conninfo` shows the connection, `\dt practice.*` lists practice tables, and `\q` exits. For one query without entering the prompt:
+At `university=#`, enter SQL ending in a semicolon. `\conninfo` shows the connection, `\dt practice.*` lists
+practice tables, and `\q` exits. For one query without entering the prompt:
 
 ```text
 docker compose exec db psql -X -U student -d university -c "SELECT COUNT(*) FROM practice.courses;"
@@ -65,7 +83,11 @@ Save it, then run this from `course-environment` in PowerShell, Terminal, or a L
 docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/my-first-query.sql
 ```
 
-Expect `Saved on my computer` and exit status `0` (`$LASTEXITCODE` in PowerShell, `echo $?` on macOS/Linux). Change the text to `Edited`, save, and run it again. The changed output confirms the container read the current host file. `-T` disables terminal allocation; `ON_ERROR_STOP=1` stops on a SQL error. Replace the filename for `work/practice-02.sql` or your Practice 3–4 files. The file path used by `psql` begins `/work/`, while the path in your local editor begins `work/`.
+Expect `Saved on my computer` and exit status `0` (`$LASTEXITCODE` in PowerShell, `echo $?` on macOS/Linux).
+Change the text to `Edited`, save, and run it again. The changed output confirms the container read the
+current host file. `-T` disables terminal allocation; `ON_ERROR_STOP=1` stops on a SQL error. Replace the
+filename for `work/practice-02.sql` or your Practice 3–4 files. The file path used by `psql` begins `/work/`,
+while the path in your local editor begins `work/`.
 
 To test error stopping, put this in `work/intentional-error.sql`:
 
@@ -74,14 +96,46 @@ SELECT * FROM practice.no_such_table;
 SELECT 'THIS MUST NOT RUN' AS sentinel;
 ```
 
-Run it with the same command using `/work/intentional-error.sql`. It should report the missing table, exit nonzero, and not print the sentinel. Successful statements before a failure are not automatically undone; use `BEGIN` and `ROLLBACK` when needed. Delete the test file when finished.
+Run it with the same command using `/work/intentional-error.sql`. It should report the missing table, exit
+nonzero, and not print the sentinel. Successful statements before a failure are not automatically undone; use
+`BEGIN` and `ROLLBACK` when needed. Delete the test file when finished.
+
+## Save reporting and window practice work
+
+For [Practices 7–8](practices-07-08.md), open `work/practice-07.sql` or `work/practice-08.sql` and add one
+query below each task prompt. In the GUI, select one complete query, including its CTEs, to run that task.
+For P7, execute `SET TIME ZONE 'UTC';` in the same connection first and repeat it after reconnecting.
+The setting affects date casts and weekly buckets; running it in a different tab/connection does not set
+the reporting zone for your current query.
+
+Once you have saved your queries, you can run either complete file through the existing mount:
+
+<!-- rumdl-disable MD013 -->
+
+```sh
+docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/practice-07.sql
+docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /work/practice-08.sql
+```
+
+<!-- rumdl-enable MD013 -->
+
+Keep the P7 starter's UTC setting at the top of the file. A CTE exists only for its own query, so each
+later query that reuses a daily-count or latest-state calculation must include that CTE again.
+The starters contain prompts; output appears after you write and save the corresponding SELECT queries.
+
+Label result exports with task IDs, such as `work/P8-8.csv`, and retain headers, row count and NULL values.
+Keep explanation notes in SQL comments or a separate file under `work/`. Follow each task's Explain and save
+prompts: use actual boundary events for P7 and tied grades, history rows or frame contributors for P8.
+Do not rely on a grid left open in a browser tab as your only saved evidence.
 
 ## Stop and reset
 
-`docker compose stop` and `docker compose start` preserve the named PostgreSQL and pgAdmin volumes and the host `work/` files. The scoped reset below rebuilds only the `practice` schema:
+`docker compose stop` and `docker compose start` preserve the named PostgreSQL and pgAdmin volumes and the
+host `work/` files. The scoped reset below rebuilds only the `practice` schema:
 
 ```text
 docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql
 ```
 
-`docker compose down -v` removes this project's database and pgAdmin volumes. Files in host `work/` remain. Do not run machine-wide Docker cleanup commands on a shared server.
+`docker compose down -v` removes this project's database and pgAdmin volumes. Files in host `work/` remain. Do
+not run machine-wide Docker cleanup commands on a shared server.

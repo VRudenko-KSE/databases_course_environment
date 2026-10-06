@@ -1,0 +1,12 @@
+-- Practice 8: use reporting_lab.results (14 fictional rows, 12 graded).
+-- P8-1: keep every graded row; add offering AVG, graded COUNT and grade minus offering AVG with OVER.
+-- P8-2: rank graded rows per offering with ROW_NUMBER (grade DESC, student_id),
+-- RANK and DENSE_RANK (grade DESC only). Order displayed rows by offering_id and position.
+-- P8-3: use a CTE and an outer filter to return exactly two graded students per offering.
+-- P8-4: group ALL results by enrolled_on; add a running count with SUM OVER and an explicit ROWS frame.
+-- Optional P8-5: use LAG(grade) per student (enrolled_on, offering_id) to show previous grade and change.
+-- Optional P8-6: from daily counts, AVG the current and two preceding observed dates with a ROWS frame.
+-- Optional P8-7: split graded rows per offering into three balanced NTILE groups (grade DESC, student_id).
+-- Optional P8-8: attach FIRST_VALUE, default LAST_VALUE and full-frame LAST_VALUE per student;
+-- order history by enrolled_on, offering_id and keep NULL grades.
+-- Save one query, output and reasoning per task. Predict the ties/NULLs/date gap before running.

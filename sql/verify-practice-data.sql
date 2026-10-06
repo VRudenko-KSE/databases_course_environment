@@ -27,6 +27,25 @@ BEGIN
        OR (SELECT count(*) FROM library_p6.loan_report) <> 3 THEN
         RAISE EXCEPTION 'Practice 6 library migration is incomplete';
     END IF;
+    IF (SELECT count(*) FROM storage_lab.enrolments_narrow) <> 40000
+       OR (SELECT count(*) FROM storage_lab.enrolments_wide) <> 40000
+       OR (SELECT count(*) FROM storage_lab.enrolments_grouped) <> 40000
+       OR to_regclass('storage_lab.narrow_locations') IS NULL
+       OR to_regclass('storage_lab.grouped_locations') IS NULL THEN
+        RAISE EXCEPTION 'Storage investigation migration is incomplete';
+    END IF;
+    IF (SELECT count(*) FROM reporting_lab.teachers) <> 2
+       OR (SELECT count(*) FROM reporting_lab.offering_teachers) <> 9
+       OR (SELECT count(*) FROM reporting_lab.results) <> 14
+       OR (SELECT count(*) FROM reporting_lab.results WHERE grade IS NOT NULL) <> 12 THEN
+        RAISE EXCEPTION 'Practice 7-8 reporting migration is incomplete';
+    END IF;
+    IF (SELECT count(*) FROM activity_lab.students) <> 7
+       OR (SELECT count(*) FROM activity_lab.workshops) <> 4
+       OR (SELECT count(*) FROM activity_lab.registrations) <> 10
+       OR (SELECT count(*) FROM activity_lab.registration_events) <> 18 THEN
+        RAISE EXCEPTION 'Practice 7 activity migration is incomplete';
+    END IF;
 END
 $$;
 
