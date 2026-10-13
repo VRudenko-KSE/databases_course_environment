@@ -17,7 +17,7 @@ pgAdmin connection, and checks container `psql` and a host-saved SQL file. Use
 [Troubleshooting](docs/troubleshooting.md) when an expected result differs.
 
 See the [practice dataset guide](docs/dataset.md) for the canonical four-table fixture, the separate P7 reporting
-and P8 window fixtures, their deliberate edge cases, and an optional P9 `EXPLAIN (ANALYZE, BUFFERS)` sample.
+and P8 window fixtures, the 2,000,000-row P9/P10 index fixture, and their deliberate edge cases.
 
 For Practice 2, edit `work/practice-02.sql` and answer the `SELECT`, filtering, ordering, and limiting prompts from
 class against `practice.courses`. Run the saved file through `/work` as shown in
@@ -48,6 +48,14 @@ column names the query steps, required columns and ordering; Explain and save gi
 Save queries in `work/practice-07.sql` and `work/practice-08.sql`, with labelled output exports and reasoning
 under `work/`. P7 retains its A2 orientation studio;
 A2 opens after P8, with the next studio in P9.
+
+For Practices 9–10, use [Indexes, Reports, and Query Plans](docs/practices-09-10.md) and the
+[index SQL guide](docs/practices-09-10-sql-guide.md). Each practice has four core tasks and one optional task.
+The populated `index_lab` fixture supports transcript/date/status reports, composite ordering, top-N windows,
+complete calendars and a controlled write experiment. Partial indexes are optional in P9; covering indexes in P10.
+The handout explains installing only the new migration into an existing database, restoring index baselines,
+and rebuilding scratch writes. Save work in `work/practice-09.sql` and `work/practice-10.sql`.
+Both sessions preserve the final 20-minute Assignment 2 studio.
 
 The host `work/` directory is shared with pgAdmin as **Course work** and with PostgreSQL as `/work` (read only in
 the database container). Save SQL in `work/` using your local editor or SQL interface. Practices 5–6 use the
@@ -80,7 +88,7 @@ public interface; change both sample passwords before exposing them. On a person
 | Reset practice schema | `docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql` | Original `practice` fixture restored |
 | Stop services | `docker compose stop` | Volumes remain for the next start |
 | Restart services | `docker compose restart` | Services restart; volumes remain |
-| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university and P3–8 fixtures; host files remain |
+| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university and P3–10 fixtures; host files remain |
 
 <!-- rumdl-enable MD013 -->
 

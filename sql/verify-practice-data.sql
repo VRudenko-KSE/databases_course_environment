@@ -46,6 +46,13 @@ BEGIN
        OR (SELECT count(*) FROM activity_lab.registration_events) <> 18 THEN
         RAISE EXCEPTION 'Practice 7 activity migration is incomplete';
     END IF;
+    IF (SELECT count(*) FROM index_lab.students) <> 100000
+       OR (SELECT count(*) FROM index_lab.courses) <> 500
+       OR (SELECT count(*) FROM index_lab.offerings) <> 10000
+       OR (SELECT count(*) FROM index_lab.enrolments) <> 2000000
+       OR (SELECT count(*) FROM index_lab.ingest_batch) <> 1000 THEN
+        RAISE EXCEPTION 'Practice 9-10 index migration is incomplete';
+    END IF;
 END
 $$;
 

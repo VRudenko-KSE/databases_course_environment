@@ -6,13 +6,16 @@ filename order **only when its data volume is empty**:
 1. `00-university.sql` defines and populates the university fixture for Practices 1–2.
 2. `10-library-03-04.sql` creates the populated `library_lab` baseline for Practices 3–4.
 3. `20-practices-05-06.sql` creates independent `library_p5` and `library_p6` fixtures.
-4. `30-practices-07-08.sql` creates unindexed storage tables/location views in `storage_lab`, retained for P9
-   and optional lecture exploration after the P7 redesign.
+4. `30-practices-07-08.sql` creates unindexed storage tables/location views in `storage_lab`, retained for
+   optional storage/lecture exploration after the P7 redesign. P9/P10 core tasks use migration 60 instead.
 5. `40-practices-07-08-reporting.sql` creates the P8 fictional window results in `reporting_lab`, plus legacy
    teacher-link examples; canonical university grades remain unchanged.
 6. `50-practice-07-activity.sql` adds the independent P7 students/workshops/associations/status-event fixture
    in `activity_lab`: 7 students, 4 workshops, 10 associations and 18 events. UTC boundaries, a quiet day,
    tied latest events and an active August-only registration support the report checks.
+7. `60-practices-09-10.sql` adds `index_lab`: 100,000 students, 500 courses, 10,000 offerings,
+   2,000,000 enrolments and a 1,000-row scratch-write batch. It supplies constraint indexes, rare/common statuses,
+   missing grades, grade/timestamp ties, explicit UTC boundaries, an empty offering and a quiet date.
 
 Add later practice stages as higher-numbered files. Keep each stage deterministic and fail on SQL errors. Adding
 or editing a file does not update an existing volume; `docker compose down -v` followed by
@@ -22,7 +25,10 @@ or editing a file does not update an existing volume; `docker compose down -v` f
 For an existing database, [Practices 7–8](../../docs/practices-07-08.md#prepare-the-fixture) document applying
 only the missing migrations once: 40 for `reporting_lab`, 50 for `activity_lab`. Existing P7–8 installations
 normally need only 50. Their scoped checkpoint replaces activity_lab/reporting_lab and preserves storage_lab
-plus earlier schemas. Before P9, install migration 30 once if storage_lab is missing.
+plus earlier schemas. P9/P10 use the new index_lab fixture; storage_lab is a retained optional storage demonstration.
+For existing installations, apply only missing migration 60 as described in the
+[P9/P10 handout](../../docs/practices-09-10.md#prepare-before-practice-9).
+Its full checkpoint replaces only index_lab/index_write; its index reset preserves the seed and constraint indexes.
 
 An existing earlier activity fixture with 9 associations and 17 events will not receive the August-only
 case when the package files change. Save lab edits, then use the documented scoped P7–8 checkpoint to

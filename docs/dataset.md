@@ -13,7 +13,7 @@ query output while covering joins, aggregation, NULL handling, and relational co
 `courses.seats_available` remains the introductory Week 1 snapshot. It does not represent capacity or derive from
 the new offering and enrolment rows.
 
-## Coverage through Week 4
+## Coverage Through Week 5
 
 - Week 1: the original eight courses and every value are unchanged for basic `SELECT`, filtering, sorting, aliases,
   expressions, and NULL concepts.
@@ -25,8 +25,9 @@ the new offering and enrolment rows.
 - Week 4: [Practices 7–8](practices-07-08.md) build calendar metrics and latest-state reports from eighteen
   fictional `activity_lab.registration_events`, then introduce windows using fourteen fictional
   `reporting_lab.results`. Each session has four core/four optional queries. Canonical enrolments remain
-  unchanged. The synthetic 40,000-row storage_lab fixture is retained for the P9 index investigation.
-  The separate access-plan recipe below remains available for the later indexing work.
+  unchanged. The synthetic 40,000-row storage_lab fixture remains an optional storage demonstration.
+- Week 5: [Practices 9–10](practices-09-10.md) use a prepared 2,000,000-enrolment fixture in `index_lab`.
+  Four core tasks and one optional task per session connect index experiments to earlier SQL reports.
 
 Deliberate cases include a student with no enrolments, courses with no offering, an empty offering, an offering with
 only NULL grades, and another with mixed NULL and numeric grades. Grades contain 0, 100, repeats, and tied offering
@@ -91,9 +92,28 @@ For an existing database, install only missing lab schemas as described in
 save lab edits before using the documented P7–8 checkpoint; it replaces activity_lab and reporting_lab
 while preserving earlier practice schemas, storage_lab and host work files.
 
-## Optional access-plan sample for Practice 9
+## Index Workshop Fixture for Practices 9–10
 
-Run this recipe only when exploring plans and buffers. It creates an ordinary, separately named 18,000-row table so
+The [P9/P10 handout](practices-09-10.md) explains setup, ten tasks, experiment state and scoped recovery.
+Migration 60 creates 100,000 students, 500 courses, 10,000 offerings, 2,000,000 enrolments
+and a supplied 1,000-row batch.
+Each student has 20 registrations; offering 10000 is empty. Current registration statuses have different frequencies.
+NULL/zero grades, grade ties, equal timestamps, explicit UTC date boundaries and a quiet March 4 support report checks.
+Only the main table's primary-key and unique-constraint indexes exist at baseline. Students add candidate indexes.
+
+This snapshot uses `registered_at` and current `status`, not a status-event timeline: cancellation counts by
+registration date differ from the event counts in P7. The pair revisits joins, NULLs, grouping, date intervals,
+CTEs, top-N windows, complete calendars and running totals. Partial indexes are P9's optional task;
+covering indexes are P10's optional task. Measured INSERTs use only the disposable `index_write` schema.
+
+Fresh installations load the seed automatically. Existing installations apply the missing migration once without
+erasing previous work. The full P9/P10 checkpoint restores only index_lab/index_write; the index-only reset keeps
+the seed and constraint indexes. Actual plan choices and times may differ across machines.
+
+## Optional Historical Access-Plan Sample
+
+This older recipe is separate from the required P9/P10 seed. Run it only when exploring plans and buffers.
+It creates an ordinary, separately named 18,000-row table so
 `BUFFERS` reports shared blocks. Plain `CREATE TABLE AS` deliberately fails when the table already exists instead of
 overwriting work. The observed plan and read/hit counts depend on PostgreSQL and cache state; `EXPLAIN ANALYZE`
 executes the query. A shared read may be served by the operating-system cache; it does not prove physical disk I/O or
