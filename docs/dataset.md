@@ -13,7 +13,7 @@ query output while covering joins, aggregation, NULL handling, and relational co
 `courses.seats_available` remains the introductory Week 1 snapshot. It does not represent capacity or derive from
 the new offering and enrolment rows.
 
-## Coverage Through Week 5
+## Coverage Through Week 6
 
 - Week 1: the original eight courses and every value are unchanged for basic `SELECT`, filtering, sorting, aliases,
   expressions, and NULL concepts.
@@ -28,6 +28,9 @@ the new offering and enrolment rows.
   unchanged. The synthetic 40,000-row storage_lab fixture remains an optional storage demonstration.
 - Week 5: [Practices 9–10](practices-09-10.md) use a prepared 2,000,000-enrolment fixture in `index_lab`.
   Four core tasks and one optional task per session connect index experiments to earlier SQL reports.
+- Week 6: [Practices 11–12](practices-11-12.md) add `advanced_lab` for requirements, room bookings,
+  pagination and portal-event analysis. SQL correctness and index experiments remain paired;
+  a separate external demonstration illustrates LSM storage.
 
 Deliberate cases include a student with no enrolments, courses with no offering, an empty offering, an offering with
 only NULL grades, and another with mixed NULL and numeric grades. Grades contain 0, 100, repeats, and tied offering
@@ -109,6 +112,35 @@ covering indexes are P10's optional task. Measured INSERTs use only the disposab
 Fresh installations load the seed automatically. Existing installations apply the missing migration once without
 erasing previous work. The full P9/P10 checkpoint restores only index_lab/index_write; the index-only reset keeps
 the seed and constraint indexes. Actual plan choices and times may differ across machines.
+
+## Advanced SQL Fixture for Practices 11–12
+
+[Migration 70](../sql/migrations/70-practices-11-12.sql) creates an independent `advanced_lab` schema:
+
+| Table | One row represents | Rows |
+| --- | --- | ---: |
+| `programmes` | A study programme | 10 |
+| `students` | A student in a programme | 10,000 |
+| `courses` | A catalogue course | 30 |
+| `requirements` | One required course in a programme | 27 |
+| `attempts` | One recorded course attempt, possibly ungraded | 100,000 |
+| `rooms` | A room with a seating capacity | 200 |
+| `bookings` | One half-open room reservation interval | 200,000 |
+| `portal_events` | One timestamped portal action | 240,000 |
+
+[Migration 71](../sql/migrations/71-practices-11-12-edge-cases.sql) upgrades three background rows without
+changing these totals. Apply it to existing installations too; the [readiness check](../sql/practices-11-12-ready.sql)
+checks the revised cases as well as counts. Repeated attempts and NULL grades distinguish “any” from
+“every required course.” Student 1 has mixed passing/failing attempts for a required course; student 6
+passes only a non-required course. Attempt IDs do not encode chronology. Programme 10 has no
+requirements. Adjacent bookings, an empty room, and tied timestamps exercise overlap and pagination.
+Portal events include equal timestamps, gaps of 30, 30.5 and 31 minutes, missing days and
+consecutive active-day runs. These are deliberately fictional teaching cases, not a real usage distribution.
+
+Read the [handout](practices-11-12.md) for precise task parameters and use the
+[SQL guide](practices-11-12-sql-guide.md) for syntax. The scoped checkpoint replaces only `advanced_lab`;
+the index reset retains its rows and constraint indexes. Keep bookings unchanged during page comparisons.
+Event sessions reset at the stated report boundary; they do not infer continuous sessions from earlier history.
 
 ## Optional Historical Access-Plan Sample
 

@@ -57,6 +57,16 @@ The handout explains installing only the new migration into an existing database
 and rebuilding scratch writes. Save work in `work/practice-09.sql` and `work/practice-10.sql`.
 Both sessions preserve the final 20-minute Assignment 2 studio.
 
+For Practices 11–12, use [Advanced SQL and Index Investigations](docs/practices-11-12.md) and the
+[SQL guide](docs/practices-11-12-sql-guide.md). A short external LSM demonstration connects Lecture 6
+to the pair; the main work stays in PostgreSQL. P11 covers course requirements, booking conflicts,
+room availability and pagination. P12 covers event gaps, sessions, active-day streaks and CTE plans.
+Each session has four core tasks and one optional extension, plus the final 20-minute Assignment 2 studio.
+Migration 70 creates a separate `advanced_lab` fixture; guarded migration 71 adds the current edge cases
+to new and existing installations. Use the handout's scoped preparation and recovery instructions.
+Save queries in `work/practice-11.sql` and `work/practice-12.sql`; both include commented partial outlines.
+Use the SQL guide's complete-result comparison/export procedure for the experiments.
+
 The host `work/` directory is shared with pgAdmin as **Course work** and with PostgreSQL as `/work` (read only in
 the database container). Save SQL in `work/` using your local editor or SQL interface. Practices 5–6 use the
 chosen interface to run each query, as do Practices 7–8. On Linux, grant pgAdmin's container user (UID 5050)
@@ -88,12 +98,12 @@ public interface; change both sample passwords before exposing them. On a person
 | Reset practice schema | `docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql` | Original `practice` fixture restored |
 | Stop services | `docker compose stop` | Volumes remain for the next start |
 | Restart services | `docker compose restart` | Services restart; volumes remain |
-| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university and P3–10 fixtures; host files remain |
+| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university and P3–12 fixtures; host files remain |
 
 <!-- rumdl-enable MD013 -->
 
 Read [Query and script workflows](docs/query-and-script-workflows.md) for pgAdmin, interactive `psql`, one-off
 queries, saved files, expected output, error stopping, and platform-specific shell examples. pgAdmin is the main
 course GUI; [DBeaver Community](docs/dbeaver-alternative.md) is an optional locally installed alternative. The
-[release checklist](docs/release-checklist.md) distinguishes observed runtime evidence from platform checks that
+[environment verification checklist](docs/setup-verification.md) distinguishes observed runtime evidence from platform checks that
 remain pending.

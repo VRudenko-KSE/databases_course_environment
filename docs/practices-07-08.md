@@ -267,7 +267,7 @@ P8 exit: choose between exactly two students and everyone tied at second place. 
 function and tie rule; explain where you filter its result. Retrieve both exits briefly at P9 with feedback.
 
 P8's final 20 minutes belong to the window workshop, with no assignment studio.
-After class, read the released Assignment 2 brief. Performance investigations continue in P9, where
+After class, read the Assignment 2 brief. Performance investigations continue in P9, where
 scan/buffer observations support the before/after index experiment.
 
 ## PostgreSQL references

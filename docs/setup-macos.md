@@ -17,7 +17,7 @@ route used here.
 The course runtime was exercised on **2026-09-12** on Darwin 25.6.0 x86_64 with Docker Desktop 4.55.0, Docker
 client/engine 29.1.3, Compose v2.40.3-desktop.1, and a Linux amd64 engine. This proves the already-installed Intel
 runtime and query path. A fresh Docker installer walkthrough, Apple Silicon runtime, screenshots of current
-installer choices, and a novice walkthrough remain **pending release evidence**. No unobserved screenshot is linked.
+installer choices, and a novice walkthrough remain **pending verification**. No unobserved screenshot is linked.
 
 ## Install and start the environment
 
@@ -101,9 +101,9 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
 
 ### macOS clone configure and start
 
-7. **Obtain the course package.** Where: Terminal. The release announcement will provide the real URL. Replace the
+7. **Obtain the course package.** Where: Terminal. The course announcement will provide the real URL. Replace the
 
-   placeholder, including the brackets, with the actual URL from the release announcement before running:
+   placeholder, including the brackets, with the actual URL from the course announcement before running:
 
    ```sh
    cd "$HOME/Documents"
@@ -112,7 +112,7 @@ Phase links: [OS and virtualization preflight](#macos-preflight),
 
    Expected: a new `course-environment` directory. Recovery: do not run the placeholder literally. For network,
    authentication, or repository errors, use
-   [Failed clone](troubleshooting.md#failed-clone-or-no-release-url). If the instructor supplied a downloaded
+   [Failed clone](troubleshooting.md#failed-clone-or-no-repository-url). If the instructor supplied a downloaded
    `course-environment` folder, move it into Documents with Finder and skip the clone command.
 
 8. **Enter the package and confirm the working directory.** Where: Terminal. Type:

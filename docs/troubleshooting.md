@@ -62,7 +62,7 @@ missing. Install QEMU with `sudo apt install qemu-system-x86` on Ubuntu/Debian o
 course computer when the architecture is not x86_64 or the machine depends on nested virtualization.
 
 **Expected:** Docker Desktop reaches its running state and `docker version` shows a Server section. Windows and Mac
-installer/firmware recoveries remain release-test items until observed on the named hardware.
+installer/firmware recoveries remain untested setup steps until observed on the named hardware.
 
 ## Linux Docker Desktop context or socket is wrong
 
@@ -96,18 +96,18 @@ insufficient. Reopen Docker Desktop and wait for it to report that Docker is run
 
 **Expected:** `Get-Command docker` or `command -v docker` finds the CLI, and `docker version` shows Client and Server.
 
-## Failed clone or no release URL
+## Failed clone or no repository URL
 
 **Symptom:** `git clone` says repository not found, authentication failed, host could not be resolved, or the text
 `<repository-url>` appears in the error.
 
-**Diagnose:** confirm that the course release announcement now contains a real repository URL and that you copied
+**Diagnose:** confirm that the course announcement now contains a real repository URL and that you copied
 the complete URL in place of `<repository-url>`, including removing its brackets. Run `git --version` separately.
 Do not invent a URL from the course name.
 
-**Recover:** reconnect to the network, sign in through the method named in the release announcement, and retry into
+**Recover:** reconnect to the network, sign in through the method named in the course announcement, and retry into
 a parent directory that does not already contain `course-environment`. If no remote has been announced, use the
-instructor-provided downloaded `course-environment` folder. A clean published-clone rehearsal remains a release gate.
+instructor-provided downloaded `course-environment` folder. A clean published-clone rehearsal remains a pending check.
 
 **Expected:** the package directory contains `compose.yaml`, `.env.example`, `sql`, `pgadmin`, and `work`. If clone
 failed after creating an incomplete folder, keep the error for support and choose a different empty destination for
@@ -312,9 +312,10 @@ August history. Do not rerun an already installed CREATE SCHEMA migration as an 
 The local candidate's macOS Intel rehearsal observed Docker stop/start recovery with database and pgAdmin state
 preserved. It also observed a space-containing clean local clone, stop-on-error behavior, and occupied-port recovery
 by changing project ports. The canonical evidence and remaining gates are in the
-[release checklist](release-checklist.md#task-6-local-release-candidate-verification).
+[environment verification checklist](setup-verification.md#task-6-local-materials-verification).
 
 Windows/WSL, macOS fresh installation, macOS Apple Silicon, native Docker Desktop on Ubuntu/Debian/Fedora, Linux
-KVM/context/file sharing, DBeaver GUI/driver, and novice recovery walkthroughs remain unverified release checks. The
-course release must not convert these instructions into claims until the named platform and exact version have been
+KVM/context/file sharing, DBeaver GUI/driver, and novice recovery walkthroughs remain unverified setup checks. The
+course documentation must not convert these instructions into claims until the named platform and exact version have
+been
 observed.

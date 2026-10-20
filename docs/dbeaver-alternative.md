@@ -12,7 +12,7 @@ Community release was **26.2.0**, with Windows x64/Arm, macOS Apple Silicon/Inte
 the current Community installer for your architecture if the version has advanced.
 
 DBeaver installation, its first JDBC-driver download, and its GUI query path were not exercised on the available
-host and remain **pending release evidence**. No screenshot is linked because a real capture from the tested release
+host and remain **pending verification**. No screenshot is linked because a real capture from the tested release
 is not available. The connection values below come from the tested Compose contract; pgAdmin and container `psql`
 have already returned the stated identity.
 
@@ -120,6 +120,6 @@ Where: right-click the saved course connection in **Database Navigator**, choose
 ### Action 10: Compare the required route
 
 Where: the host terminal in `course-environment`. Run the same query with container `psql` using the command in
-[Query and script workflows](query-and-script-workflows.md#use-a-one-off-query). Expected: DBeaver and container
+[Query and script workflows](query-and-script-workflows.md#use-interactive-container-psql). Expected: DBeaver and container
 `psql` report the same database and user. Recovery: treat any mismatch as the wrong DBeaver connection rather than
 changing the course containers.

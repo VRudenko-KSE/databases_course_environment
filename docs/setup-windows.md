@@ -17,7 +17,7 @@ Git's official page offered Git 2.55.0 and Git for Windows 2.55.0(5) when checke
 
 The course runtime has been exercised on macOS with a Linux amd64 Docker engine, not on Windows. The Windows
 installer screens, WSL restart path, bind mounts, native Windows runtime, Windows Arm runtime, and a novice
-walkthrough are **pending release evidence**. No screenshot is linked because no real Windows installer capture is
+walkthrough are **pending verification**. No screenshot is linked because no real Windows installer capture is
 available. The exact vendor menu and button names below are from the current official instructions.
 
 ## Install and start the environment
@@ -110,7 +110,7 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
 
 7. **Obtain the course package.** Where: stay in PowerShell and change to the parent folder where you want to keep
 
-   course files, for example `Set-Location "$HOME\Documents"`. The release announcement will supply the real URL.
+   course files, for example `Set-Location "$HOME\Documents"`. The course announcement will supply the real URL.
    Replace `<repository-url>`, including the brackets, with that actual URL before running:
 
    ```powershell
@@ -119,7 +119,7 @@ Phase links: [OS and virtualization preflight](#windows-preflight),
 
    Expected: a new `course-environment` folder appears. Recovery: do not run the placeholder literally. For an
    authentication, network, or missing-repository error, see
-   [Failed clone](troubleshooting.md#failed-clone-or-no-release-url). If the instructor supplied a downloaded
+   [Failed clone](troubleshooting.md#failed-clone-or-no-repository-url). If the instructor supplied a downloaded
    `course-environment` folder instead, move it to Documents and skip the clone command.
 
 8. **Enter the package and confirm the working directory.** Where: PowerShell. Type:

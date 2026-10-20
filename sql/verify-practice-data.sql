@@ -56,4 +56,5 @@ BEGIN
 END
 $$;
 
+\ir practices-11-12-ready.sql
 SELECT 'Practice data ready' AS result;

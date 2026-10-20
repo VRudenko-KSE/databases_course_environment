@@ -1,4 +1,4 @@
-# Release Checklist
+# Environment Verification Checklist
 
 ## Current Practices 7–8 package
 
@@ -26,13 +26,13 @@ formatting before packaging. Do not copy private solution files into the learner
 
 Manifest inspection date: **2026-09-12**.
 
-The release candidates were inspected directly with `docker buildx imagetools inspect`. Both tags were available,
+The image candidates were inspected directly with `docker buildx imagetools inspect`. Both tags were available,
 so no replacement version was needed. Compose pins the multi-platform image-index digest so Docker selects the
 matching native architecture without a forced platform.
 
 <!-- rumdl-disable MD013 -->
 
-| Image | Pinned release reference | Linux amd64 manifest | Linux arm64 manifest | Result |
+| Image | Pinned image reference | Linux amd64 manifest | Linux arm64 manifest | Result |
 |---|---|---|---|---|
 | PostgreSQL | `postgres:18.6@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280` | `sha256:7341002d2b8c7c5bdd7542a671a95b36196c0b5b888daf454ae4fc33ba5346d7` | `sha256:6fd9e18b6fedda0a34e4d53ad6fdbd4289a217300af573c31ec7084e6d9cf329` (`arm64/v8`) | Both required architectures present |
 | pgAdmin | `dpage/pgadmin4:9.17@sha256:2f4ce946ddf8360680d7eff4eaba1d91859eb6b4003e6623bad5c63a322c2f4d` | `sha256:8cfafd474324cb038b92277ff4f8b01d9576440702fce03eb5ba845fa1405960` | `sha256:a5807e29e73fa0df641a8545b6bdf0cea83b543a924616ef37d34dbe87ea0bed` | Both required architectures present |
@@ -40,7 +40,7 @@ matching native architecture without a forced platform.
 <!-- rumdl-enable MD013 -->
 
 Manifest presence is registry evidence, not a native runtime test. The runtime rehearsal below records the actual
-host and engine architectures used; native arm64 startup remains a separate release acceptance check until observed.
+host and engine architectures used; native arm64 startup remains a separate compatibility check until observed.
 
 ## Runtime rehearsal evidence
 
@@ -69,21 +69,21 @@ therefore sets its supported `PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS` option
 first reproduced the rejection, then verified the override with a running container and successful ping.
 
 Cross-platform, native arm64 runtime, installer, novice, disconnected-network, and published-clone checks remain
-release gates and must not be marked complete without observed evidence.
+pending checks and must not be marked complete without observed evidence.
 
-## Task 6 local release-candidate verification
+## Task 6 local materials verification
 
 Observed at **2026-09-12T17:02:26Z** on macOS 26.6.2 (Darwin 25.6.0) on an Intel x86_64 host, using
 Docker Desktop 4.55.0, Docker client/engine 29.1.3, Compose v2.40.3-desktop.1, Git 2.50.1, uv 0.12.9,
 CPython 3.14.7, Playwright 1.62.0, and Google Chrome. The separate checker project is
-`/private/tmp/course-release-check`; it is not part of this learner package.
+a temporary directory; it is not part of this learner package.
 
 The **`local-rc-2026-09-12`** Git tag is the historical full-runtime and clean-local-clone baseline; its exact
 commit is recorded in the private Task 6 verification report. **`local-rc-2026-09-13`** is the finalized local
 documentation-fix tag, created after the scoped PASS. It records the reviewed documentation changes and focused
 follow-up checks; it does not replace the broader baseline runtime/clone evidence. Both tags belong to the local
 `course-environment` repository. The parent course workspace is not a Git repository. Neither local tag is a
-published release or satisfies the remote-publication gate.
+published repository or satisfies the remote-publication gate.
 
 ### 2026-09-13 Docker Desktop Linux documentation revision
 
@@ -109,7 +109,7 @@ untested route.
 | 7 | Practice reset and stop/start | Observed on this host | A course-title edit survived stop/start. Reset restored eight exact seed rows and course 101 title `Databases`, kept a `public` guard row, and left the four shipped SQL/work files byte-for-byte unchanged. |
 | 8 | Setup blocker diagnosis/recovery | Partial | A second project reproduced `Bind for 127.0.0.1:55433 failed: port is already allocated`; changing its two host ports recovered both services to healthy. Remaining Docker-stopped, missing-PATH, wrong-password, missing-file, and SELinux/bind-mount fault exercises are documented but not all executed on this host. |
 | 9 | Offline/pre-pull path | Partial | `docker compose pull` completed, then a new project reached both health checks with `docker compose up -d --pull never --wait`. No host/daemon network was disabled, so a real disconnected-network run and native arm64 pre-pull remain pending. |
-| 10 | Timed novice walkthrough | Pending | No novice participant was available. No checkpoint time, helper load, individual completion, or Practice 2 fit is claimed. Use the record in the private TA guide before release. |
+| 10 | Timed novice walkthrough | Pending | No novice participant was available. No checkpoint time, helper load, individual completion, or Practice 2 fit is claimed. Use the record in the private TA guide before students begin. |
 | 11 | Published URL/revision and public clone | Pending | No destination remote or access policy was supplied and publication was not authorized. A student-accessible published clone remains required. |
 
 <!-- rumdl-enable MD013 -->
@@ -176,7 +176,7 @@ claim that loading a tag recreates digest resolution without a real load/start t
 ### Clean local clone rehearsal
 
 Local source commit `49111c2` was cloned to
-`/private/tmp/course-release-check/Course Environment Clean Clone`, a path containing spaces. With isolated ports
+a temporary directory whose path contained spaces. With isolated ports
 55436/55054, startup reached both health checks. Interactive psql showed database `university`, user `student`,
 and table `practice.courses`; the one-off identity query matched; `/work/verify.sql` returned count 8 and all
 eight IDs; and the prompt-only `/work/practice-02.sql` exited 0. A fresh pgAdmin volume showed the preloaded server,
@@ -184,7 +184,7 @@ accepted the database password, and returned the matching identity, count, and I
 both services, the clone stayed clean apart from ignored `.env`, and project-scoped volume cleanup succeeded.
 
 This verifies a clean **local** clone of the package content. It does not satisfy acceptance check 11, which requires
-the instructor-authorized, student-accessible published URL and release revision.
+the instructor-authorized, student-accessible published URL and repository revision.
 
 ### Package and publication gates
 
@@ -195,6 +195,6 @@ and parent course documents are outside the repository. The dated Task 6 clone r
 historical package revision; it does not establish a published clone of the current P7–8 additions.
 
 Before publication, the instructor must provide the destination URL and access policy, authorize publication,
-publish the actual URL in the release announcement, and test the real URL and released revision as a
+publish the actual URL in the course announcement, and test the real URL and repository revision as a
 student. Windows, macOS Apple Silicon, native Docker Desktop on the named Linux distributions, Linux
-KVM/context/file sharing, actual disconnected-network, novice, and published-clone evidence remain release gates.
+KVM/context/file sharing, actual disconnected-network, novice, and published-clone evidence remain pending checks.

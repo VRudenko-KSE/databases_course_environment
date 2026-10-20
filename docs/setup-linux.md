@@ -270,7 +270,7 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
 
 ### Linux clone configure and start
 
-14. **Obtain the course package.** Where: Terminal. The release announcement will provide the real URL. Replace
+14. **Obtain the course package.** Where: Terminal. The course announcement will provide the real URL. Replace
     `<repository-url>`, including the brackets, with that actual URL before running:
 
     ```sh
@@ -279,7 +279,7 @@ then [clone, configure, and start](#linux-clone-configure-and-start),
     ```
 
     Expected: a new `course-environment` directory. Recovery: do not run the placeholder literally. Use
-    [Failed clone](troubleshooting.md#failed-clone-or-no-release-url) for network or access errors. If the instructor
+    [Failed clone](troubleshooting.md#failed-clone-or-no-repository-url) for network or access errors. If the instructor
     supplied a downloaded `course-environment` folder, place it under your local home directory and skip the clone
     command. Avoid a network share, remote mount, or removable drive for the first run because Docker Desktop must
     share these host files with its Linux virtual machine.
