@@ -175,6 +175,13 @@ See PostgreSQL's documentation for [`EXPLAIN`](https://www.postgresql.org/docs/c
 
 ## Extending and resetting
 
+[Practices 13–14](practices-13-14.md) use five independent runtime fixtures installed by
+migrations 80, 83, 84, 86 and 88: two current-loan fixtures, protected workshop admission, room
+capacity and exam staffing. Counter races and deadlock ordering use supplied reasoning examples. They do not
+share mutable state with earlier labs. Each has its own starting-state check, reset and scoped
+TA-assisted rebuild. The handout lists columns, identities, rules and the exact A/B step order.
+These are correctness experiments, not large-data index benchmarks; completed repairs stay private.
+
 Practices 3–4 use a separate student-built `library_lab` schema described in
 [the library workshop handout](practices-03-04.md). Its start and checkpoint commands leave this university fixture
 unchanged. The library recovery schema is supplied for teaching continuity; the student exercise begins with a

@@ -67,6 +67,18 @@ to new and existing installations. Use the handout's scoped preparation and reco
 Save queries in `work/practice-11.sql` and `work/practice-12.sql`; both include commented partial outlines.
 Use the SQL guide's complete-result comparison/export procedure for the experiments.
 
+For Practices 13–14, use [Write and Explain Transaction Repairs](docs/practices-13-14.md) and the
+[short SQL guide](docs/practices-13-14-sql-guide.md). P13 has three focused repair exercises:
+atomic boundaries, a two-gap data-modifying CTE with RETURNING, and parent-lock/recheck admission.
+P14 has two SQL labs (visibility and Serializable/full retry) plus a short deadlock-ordering task.
+Unsafe traces are supplied; admission/staffing experiments and observer captures are optional.
+The five core fixtures are separate schemas; migration 88 adds an independent `p13_cte` fixture.
+Existing installations add only missing migrations, not a new Docker volume. Use the handout's
+scoped Ready/Reset files and concrete A/B blocks in [Practice 13 task files](work/practice-13/) / [Practice 14 task files](work/practice-14/).
+Students complete repair choices, save a compact observation/explanation, and can pause/resume
+independently. Minutes 60–80 remain consultation. See the separate
+[optional reference](docs/practices-13-14-optional.md) only for extensions.
+
 The host `work/` directory is shared with pgAdmin as **Course work** and with PostgreSQL as `/work` (read only in
 the database container). Save SQL in `work/` using your local editor or SQL interface. Practices 5–6 use the
 chosen interface to run each query, as do Practices 7–8. On Linux, grant pgAdmin's container user (UID 5050)
@@ -98,7 +110,7 @@ public interface; change both sample passwords before exposing them. On a person
 | Reset practice schema | `docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U student -d university -f /course/sql/reset-practice.sql` | Original `practice` fixture restored |
 | Stop services | `docker compose stop` | Volumes remain for the next start |
 | Restart services | `docker compose restart` | Services restart; volumes remain |
-| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university and P3–12 fixtures; host files remain |
+| Full reset (destructive to service volumes) | `docker compose down -v`, then `docker compose up -d --wait` | Numbered SQL migrations recreate university and P3–14 fixtures; host files remain |
 
 <!-- rumdl-enable MD013 -->
 

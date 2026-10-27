@@ -10,6 +10,14 @@ work/*
 !work/practice-10.sql
 !work/practice-11.sql
 !work/practice-12.sql
+!work/practice-13/
+!work/practice-13/01-atomicity.sql
+!work/practice-13/02-modifying-cte.sql
+!work/practice-13/03-locking.sql
+!work/practice-14/
+!work/practice-14/01-visibility.sql
+!work/practice-14/02-serializable.sql
+!work/practice-14/03-deadlock-order.sql
 !work/practice-03/
 !work/practice-04/
 work/practice-03/*

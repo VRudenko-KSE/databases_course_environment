@@ -57,4 +57,5 @@ END
 $$;
 
 \ir practices-11-12-ready.sql
+\ir practices-13-14-ready.sql
 SELECT 'Practice data ready' AS result;
